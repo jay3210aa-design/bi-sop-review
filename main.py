@@ -1,5 +1,7 @@
 from __future__ import annotations
 
+print("Hello from Codex")
+
 import argparse
 import json
 import os

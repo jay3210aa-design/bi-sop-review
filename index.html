@@ -1,0 +1,317 @@
+<!DOCTYPE html>
+<html lang="zh-TW">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>BI SOP 作業流程指引</title>
+<style>
+:root {
+  --bg:#f0f2f5; --card:#fff; --border:#e2e8f0;
+  --text:#1a202c; --sub:#718096;
+  --accent:#3182ce;
+  --green:#38a169; --green-bg:#f0fff4; --green-border:#c6f6d5;
+  --red:#e53e3e; --red-bg:#fff5f5; --red-border:#fed7d7;
+  --yellow:#d69e2e; --yellow-bg:#fffff0; --yellow-border:#fefcbf;
+}
+*{margin:0;padding:0;box-sizing:border-box}
+body{background:var(--bg);color:var(--text);font-family:-apple-system,BlinkMacSystemFont,'Segoe UI',sans-serif;font-size:14px;min-height:100vh}
+
+.header{background:#1a202c;color:#e2e8f0;padding:16px 20px}
+.header h1{font-size:17px;font-weight:700}
+.header p{font-size:12px;color:#718096;margin-top:3px}
+
+.container{max-width:720px;margin:0 auto;padding:20px 16px 40px}
+
+/* progress bar */
+.progress-wrap{background:var(--card);border-radius:10px;padding:14px 18px;margin-bottom:18px;border:1px solid var(--border);display:flex;align-items:center;gap:14px}
+.progress-bar-bg{flex:1;height:8px;background:#e2e8f0;border-radius:4px;overflow:hidden}
+.progress-bar{height:100%;background:var(--accent);border-radius:4px;transition:width .4s}
+.progress-text{font-size:12px;color:var(--sub);white-space:nowrap}
+
+/* module */
+.module{background:var(--card);border-radius:12px;border:1px solid var(--border);margin-bottom:12px;overflow:hidden;box-shadow:0 1px 4px rgba(0,0,0,.06)}
+.module-header{display:flex;align-items:center;padding:14px 18px;cursor:pointer;gap:12px;user-select:none;transition:background .15s}
+.module-header:hover{background:#f7fafc}
+.module-icon{font-size:20px;flex-shrink:0}
+.module-title{flex:1}
+.module-title h2{font-size:14px;font-weight:700}
+.module-title span{font-size:12px;color:var(--sub)}
+.module-arrow{font-size:12px;color:var(--sub);transition:transform .25s}
+.module.open .module-arrow{transform:rotate(180deg)}
+.module-badge{background:#edf2f7;color:var(--sub);font-size:11px;font-weight:700;padding:2px 8px;border-radius:99px}
+.module-done .module-badge{background:var(--green-bg);color:var(--green)}
+
+.steps{display:none;border-top:1px solid var(--border)}
+.module.open .steps{display:block}
+
+/* step */
+.step{padding:14px 18px;border-bottom:1px solid #f0f2f5;display:flex;gap:12px;align-items:flex-start;transition:background .15s}
+.step:last-child{border-bottom:none}
+.step.checked{background:#f0fff4}
+.step-check{width:22px;height:22px;border:2px solid var(--border);border-radius:6px;flex-shrink:0;cursor:pointer;display:flex;align-items:center;justify-content:center;font-size:13px;transition:all .15s;margin-top:1px}
+.step.checked .step-check{background:var(--green);border-color:var(--green);color:#fff}
+.step-body{flex:1;min-width:0}
+.step-head{display:flex;align-items:center;gap:8px;margin-bottom:6px;flex-wrap:wrap}
+.step-num{background:#edf2f7;color:var(--sub);font-size:11px;font-weight:700;padding:1px 7px;border-radius:4px}
+.step-name{font-size:13px;font-weight:700}
+.step-detail{display:none;margin-top:8px}
+.step.expanded .step-detail{display:block}
+.detail-row{font-size:12px;margin-bottom:5px;line-height:1.6;display:flex;gap:6px}
+.detail-lbl{font-weight:700;flex-shrink:0;white-space:nowrap}
+.lbl-r{color:var(--red)}
+.lbl-g{color:var(--green)}
+.kw-row{display:flex;flex-wrap:wrap;gap:4px;margin-top:6px}
+.kw{background:#ebf8ff;color:var(--accent);border-radius:4px;padding:1px 7px;font-size:11px}
+.expand-btn{font-size:11px;color:var(--accent);cursor:pointer;margin-top:4px;display:inline-block}
+.expand-btn:hover{text-decoration:underline}
+
+.reset-btn{display:block;width:100%;margin-top:16px;padding:10px;border-radius:8px;border:1px solid var(--border);background:var(--card);font-size:13px;cursor:pointer;color:var(--sub)}
+.reset-btn:hover{background:#f7fafc}
+
+.footer{text-align:center;font-size:11px;color:var(--sub);margin-top:8px}
+
+@media(max-width:600px){
+  .header{padding:12px 16px}
+  .container{padding:16px 12px 32px}
+  .module-header{padding:12px 14px}
+  .step{padding:12px 14px}
+}
+</style>
+</head>
+<body>
+
+<div class="header">
+  <h1>📋 BI SOP 作業流程指引</h1>
+  <p>S-1572-BI-002 Ver.AN（2026/01/21）｜點選步驟展開查看風險與管控措施</p>
+</div>
+
+<div class="container">
+  <div class="progress-wrap">
+    <div class="progress-bar-bg"><div class="progress-bar" id="prog-bar" style="width:0%"></div></div>
+    <span class="progress-text" id="prog-text">0 / 17 步驟</span>
+  </div>
+  <div id="modules"></div>
+  <button class="reset-btn" onclick="resetAll()">↺ 重置所有勾選</button>
+  <div class="footer" style="margin-top:16px">資料僅儲存於本機瀏覽器，關閉後保留</div>
+</div>
+
+<script>
+const MODULES = [
+  {
+    id:"furnace-in", icon:"🔥", name:"排爐作業", steps:[
+      {
+        id:"fi-1", num:"Step 1", name:"確認 Run Card（BI條件）",
+        risk:"BI 條件錯誤、產品進錯爐型",
+        control:"詳讀 Run Card，確認電壓、溫度、時間、程式與產品相符",
+        keywords:["Run Card","BI條件","拆批","確認條件"],
+      },
+      {
+        id:"fi-6", num:"Step 6", name:"IC 分量與附文件（特殊指示隔離）",
+        risk:"特殊 IC（實驗品、限制品）未隔離隨貨流入作業",
+        control:"特殊 IC 須交幹部管理，不得與正常批隨貨；附中英對照指示單",
+        keywords:["分量","附文件","實驗IC","特殊IC","BIN8","隨貨"],
+      },
+    ]
+  },
+  {
+    id:"board-load", icon:"📥", name:"上板作業", steps:[
+      {
+        id:"bl-2", num:"Step 2", name:"確認流動文件（型號、批號、數量、BI條件）",
+        risk:"流動文件與 Run Card 不符，導致進錯批或錯誤條件作業",
+        control:"確認流動文件上 P/N、Lot no、Q'ty 與 Run Card 完全一致",
+        keywords:["流動文件","型號","批號","P/N","Lot no","Q'ty"],
+      },
+      {
+        id:"bl-3", num:"Step 3", name:"CIMES Move In（刷箱號確認批號）",
+        risk:"未刷箱號導致取錯別批黑箱，造成混批",
+        control:"刷取小 Run Card 下方箱號條碼；確認各欄位資料後按 F7 確認",
+        keywords:["CIMES","Move In","箱號","BoxID","刷取","F7"],
+      },
+      {
+        id:"bl-4", num:"Step 4", name:"檢查預燒板（BIB）色帶與 Socket",
+        risk:"用錯色帶 BIB 或 IC 插入損壞 Socket 造成 IC loss",
+        control:"確認 BIB 色帶正確且 Socket 無損，異常需送修板間",
+        keywords:["BIB","預燒板","色帶","Socket","插座"],
+      },
+      {
+        id:"bl-9", num:"Step 9", name:"確認 IC 數量",
+        risk:"數量異常未發現，影響良率計算或造成 loss",
+        control:"確認來貨數量與 Run Card 相符，填寫大 Run Card QTYIN 欄位",
+        keywords:["數量","QTYIN","來貨數量","確認數量"],
+      },
+      {
+        id:"bl-11", num:"Step 11", name:"IC 外觀抽檢（1 盤）",
+        risk:"外觀異常 IC 混入正常批，影響品質",
+        control:"抽檢 1 盤 IC 外觀，確認正印與 Run Card 相符；≥3ea 異常需通知領班",
+        keywords:["外觀","抽檢","正印","LDCHKB","≥3ea"],
+      },
+      {
+        id:"bl-12", num:"Step 12", name:"確認 E-RUN CARD OI 特殊作業指示（簽名留存）",
+        risk:"特殊作業指示未確認，OP 依正常流程作業導致異常",
+        control:"確認當站各 BIN 定義與特殊作業指示，輸入工號留存紀錄",
+        keywords:["OI","E-Run Card","特殊指示","BIN定義","工號"],
+      },
+      {
+        id:"bl-15", num:"Step 15", name:"檢查首板上板狀況",
+        risk:"IC 未完全插入 Socket 導致測試異常或 IC 損壞",
+        control:"確認首板 IC 完全插入 Socket；≥5ea 上不好需通知領班",
+        keywords:["首板","上板狀況","上不好","≥5ea"],
+      },
+    ]
+  },
+  {
+    id:"furnace-zone", icon:"⚡", name:"爐區作業", steps:[
+      {
+        id:"fz-2", num:"Step 2", name:"確認 Run Card 指示（專爐限制）",
+        risk:"產品進入不相容爐型，造成測試條件不符或 IC 損壞",
+        control:"確認產品是否有專爐限制，詳讀 Run Card 注意事項",
+        keywords:["專爐","限制","爐型","氮氣","ANDO"],
+      },
+      {
+        id:"fz-8", num:"Step 8", name:"Pretest 驗爐——排除異常 IC",
+        risk:"Pretest Fail 數量異常未停爐分析，直接進行 Burn-In 造成大量不良品",
+        control:"Fail 數量異常需暫停；逐板確認 Fail 位置、交換位置重測；確認 Pass 數正確且 Fail 歸零後才啟動 Burn-In",
+        keywords:["Pretest","Pretest Fail","驗爐","Fail IC","MapMask","重測"],
+      },
+      {
+        id:"fz-10", num:"Step 10", name:"Burn-In 巡檢系統（每 2 小時）",
+        risk:"爐中異常未及時發現，擴大損失",
+        control:"系統每 2 小時巡檢一次，確認爐中無異常記錄",
+        keywords:["巡檢","BI巡檢","E-System","BIGroup","2小時"],
+      },
+      {
+        id:"fz-12", num:"Step 12", name:"確認 BI 異常單（領班 / EE 簽核）",
+        risk:"爐中異常未走完簽核流程，造成異常品流入下站",
+        control:"出爐後確認 CPIS 是否有異常單，依 Running EQ/PL 流程完成簽核",
+        keywords:["異常單","CPIS","簽核","領班確認","EE確認"],
+      },
+    ]
+  },
+  {
+    id:"board-unload", icon:"📤", name:"卸板作業", steps:[
+      {
+        id:"bu-6", num:"Step 6", name:"確認首板 IC 批號（防混料）",
+        risk:"卸板時批號未確認，造成混批",
+        control:"卸板首板確認 1ea IC 正印與 Run Card 相符；1 個工作桌面只能有 1 筆 Lot",
+        keywords:["首板","IC批號","正印","1ea","卸板首板"],
+      },
+      {
+        id:"bu-7", num:"Step 7", name:"BGA 卸板——先背面後正面，確認 IC shift",
+        risk:"BGA 產品 IC shift 未發現，造成外觀不良品流出",
+        control:"BGA 產品卸板首板：先查背面再查正面，注意是否有 IC shift",
+        keywords:["BGA","IC Shift","背面","正面","基板"],
+      },
+      {
+        id:"bu-16", num:"Step 16", name:"CIMES 結料（BIN 資料確認 / 扣留判斷）",
+        risk:"BIN 資料錯誤或未達扣留標準未扣留，造成不良品流出",
+        control:"確認各 BIN 數量並計算良率；達扣留標準需通知領班；需 RE-BI 依 Run Card 指示",
+        keywords:["結料","BIN資料","扣留","良率","RE-BI","Move Out"],
+      },
+    ]
+  },
+  {
+    id:"transfer", icon:"🚚", name:"轉出作業", steps:[
+      {
+        id:"tr-1", num:"Step 1", name:"確認子母批狀態（X70 到齊）",
+        risk:"子批未到齊即轉出，造成數量短少",
+        control:"確認 CPIS X70 子母批到齊後才執行合批轉出",
+        keywords:["子母批","X70","BKTOP","CLOT","轉出","合批"],
+      },
+    ]
+  },
+];
+
+const TOTAL = MODULES.reduce((s,m)=>s+m.steps.length,0);
+let checked = JSON.parse(localStorage.getItem('sop_checked')||'{}');
+let expanded = {};
+
+function saveChecked(){ localStorage.setItem('sop_checked', JSON.stringify(checked)); }
+
+function updateProgress(){
+  const done = Object.values(checked).filter(Boolean).length;
+  const pct = Math.round(done/TOTAL*100);
+  document.getElementById('prog-bar').style.width = pct+'%';
+  document.getElementById('prog-text').textContent = `${done} / ${TOTAL} 步驟`;
+
+  MODULES.forEach(m=>{
+    const allDone = m.steps.every(s=>checked[s.id]);
+    const badge = document.querySelector(`#mod-${m.id} .module-badge`);
+    const mod   = document.getElementById(`mod-${m.id}`);
+    if(badge){ badge.textContent = allDone ? '✓ 完成' : `${m.steps.filter(s=>checked[s.id]).length}/${m.steps.length}`; }
+    if(mod){ allDone ? mod.classList.add('module-done') : mod.classList.remove('module-done'); }
+  });
+}
+
+function toggleModule(id){
+  const el = document.getElementById('mod-'+id);
+  el.classList.toggle('open');
+}
+
+function toggleStep(id){
+  const el = document.getElementById('step-'+id);
+  checked[id] = !checked[id];
+  saveChecked();
+  el.classList.toggle('checked', !!checked[id]);
+  el.querySelector('.step-check').textContent = checked[id] ? '✓' : '';
+  updateProgress();
+}
+
+function toggleExpand(id, e){
+  e.stopPropagation();
+  const el = document.getElementById('step-'+id);
+  el.classList.toggle('expanded');
+  const btn = el.querySelector('.expand-btn');
+  btn.textContent = el.classList.contains('expanded') ? '▲ 收起' : '▼ 展開詳細';
+}
+
+function resetAll(){
+  if(!confirm('確定要重置所有勾選嗎？')) return;
+  checked = {};
+  saveChecked();
+  document.querySelectorAll('.step').forEach(el=>{
+    el.classList.remove('checked');
+    el.querySelector('.step-check').textContent='';
+  });
+  updateProgress();
+}
+
+function render(){
+  const container = document.getElementById('modules');
+  container.innerHTML = MODULES.map(m=>`
+    <div class="module" id="mod-${m.id}">
+      <div class="module-header" onclick="toggleModule('${m.id}')">
+        <span class="module-icon">${m.icon}</span>
+        <div class="module-title">
+          <h2>${m.name}</h2>
+          <span>${m.steps.length} 個步驟</span>
+        </div>
+        <span class="module-badge">0/${m.steps.length}</span>
+        <span class="module-arrow">▼</span>
+      </div>
+      <div class="steps">
+        ${m.steps.map(s=>`
+          <div class="step ${checked[s.id]?'checked':''}" id="step-${s.id}">
+            <div class="step-check" onclick="toggleStep('${s.id}')">${checked[s.id]?'✓':''}</div>
+            <div class="step-body">
+              <div class="step-head" onclick="toggleStep('${s.id}')">
+                <span class="step-num">${s.num}</span>
+                <span class="step-name">${s.name}</span>
+              </div>
+              <span class="expand-btn" onclick="toggleExpand('${s.id}',event)">▼ 展開詳細</span>
+              <div class="step-detail">
+                <div class="detail-row"><span class="detail-lbl lbl-r">⚠ 風險：</span><span>${s.risk}</span></div>
+                <div class="detail-row"><span class="detail-lbl lbl-g">✓ 管控：</span><span>${s.control}</span></div>
+                <div class="kw-row">${s.keywords.map(k=>`<span class="kw">${k}</span>`).join('')}</div>
+              </div>
+            </div>
+          </div>`).join('')}
+      </div>
+    </div>`).join('');
+
+  updateProgress();
+}
+
+render();
+</script>
+</body>
+</html>

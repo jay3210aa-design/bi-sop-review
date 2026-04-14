@@ -13,12 +13,20 @@
   --red:#c53030; --red-bg:#fff5f5; --red-border:#fc8181;
   --yellow:#d69e2e; --yellow-bg:#fffff0; --yellow-border:#f6e05e;
   --c-fi:#dd6b20; --c-bl:#3182ce; --c-fz:#e53e3e; --c-bu:#38a169; --c-tr:#805ad5;
+  --c-t9:#319795; --c-t2:#d53f8c;
 }
 *{margin:0;padding:0;box-sizing:border-box}
 body{background:var(--bg);color:var(--text);font-family:-apple-system,BlinkMacSystemFont,'Segoe UI',sans-serif;font-size:14px;min-height:100vh}
 
 /* ── Header ── */
-.header{background:#2d3748;color:#e2e8f0;padding:14px 20px 0;border-bottom:1px solid #e2e8f0}
+.header{background:#2d3748;color:#e2e8f0;padding:0;border-bottom:1px solid #e2e8f0}
+.cat-bar{display:flex;gap:6px;padding:12px 20px 10px}
+.cat-btn{flex:1;padding:9px 8px;border:2px solid rgba(255,255,255,.2);border-radius:8px;font-size:13px;font-weight:700;cursor:pointer;background:transparent;color:#a0aec0;transition:all .2s;text-align:center}
+.cat-btn:hover:not(.active){background:rgba(255,255,255,.1);color:#e2e8f0}
+.cat-bi.active{background:#3182ce;border-color:#3182ce;color:#fff}
+.cat-t9.active{background:#319795;border-color:#319795;color:#fff}
+.cat-t2.active{background:#d53f8c;border-color:#d53f8c;color:#fff}
+.header-top{padding:10px 20px 0}
 .header-top{display:flex;align-items:center;justify-content:space-between;padding-bottom:12px}
 .header h1{font-size:16px;font-weight:700}
 .header p{font-size:11px;color:#4a5568;margin-top:2px}
@@ -130,6 +138,16 @@ body{background:var(--bg);color:var(--text);font-family:-apple-system,BlinkMacSy
 .mod-tr .fc-step-box{border-color:#805ad5;background:#faf5ff}
 .mod-tr .fc-step-box .snum{background:#805ad5;color:#fff}
 
+.mod-t9 .fc-module-label{background:var(--c-t9)}
+.mod-t9 .fc-steps-col{border-color:var(--c-t9)}
+.mod-t9 .fc-step-box{border-color:#2c7a7b;background:#e6fffa}
+.mod-t9 .fc-step-box .snum{background:#2c7a7b;color:#fff}
+
+.mod-t2 .fc-module-label{background:var(--c-t2)}
+.mod-t2 .fc-steps-col{border-color:var(--c-t2)}
+.mod-t2 .fc-step-box{border-color:#b83280;background:#fff5f9}
+.mod-t2 .fc-step-box .snum{background:#b83280;color:#fff}
+
 /* modal */
 .modal-bg{display:none;position:fixed;inset:0;background:rgba(0,0,0,.75);z-index:9000;align-items:center;justify-content:center}
 .modal-bg.open{display:flex}
@@ -155,10 +173,15 @@ body{background:var(--bg);color:var(--text);font-family:-apple-system,BlinkMacSy
 <body>
 
 <div class="header">
+  <div class="cat-bar">
+    <button class="cat-btn cat-bi active" id="cat-bi" onclick="switchCategory('bi')">🔥 BI SOP</button>
+    <button class="cat-btn cat-t9" id="cat-t9" onclick="switchCategory('t9')">🖥 HT-3309</button>
+    <button class="cat-btn cat-t2" id="cat-t2" onclick="switchCategory('t2')">🖥 HT-5032</button>
+  </div>
   <div class="header-top">
     <div>
-      <h1>📋 BI SOP 作業流程指引</h1>
-      <p>S-1572-BI-002 Ver.AN（2026/01/21）</p>
+      <h1 id="page-title">📋 BI SOP 作業流程指引</h1>
+      <p id="page-subtitle">S-1572-BI-002 Ver.AN（2026/01/21）</p>
     </div>
     <div class="tab-bar">
       <button class="tab-btn active" id="tab-list" onclick="switchView('list')">☰ 清單</button>
@@ -208,7 +231,7 @@ body{background:var(--bg);color:var(--text);font-family:-apple-system,BlinkMacSy
 <script>
 // ── 資料 ──────────────────────────────────────────
 const MODULES = [
-  {id:"dispatch", fcId:"fi", icon:"🔥", name:"排爐作業 Dispatch", color:"var(--c-fi)", cls:"mod-fi", steps:[
+  {id:"dispatch", fcId:"fi", icon:"🔥", name:"排爐作業 Dispatch", color:"var(--c-fi)", cls:"mod-fi", cat:"bi", steps:[
     {id:"fi-1", num:"Step 1", name:"確認 Run Card（BI 條件）",
      detail:"確認 Run Card 指示的 BI 條件（電壓、溫度、時間、程式）是否正確。",
      risk:"BI 條件錯誤，導致燒入錯誤溫度/時間/程式",
@@ -234,7 +257,7 @@ const MODULES = [
      risk:"附錯文件造成混批；特殊 IC 未隔離隨貨流入",
      control:"雙手取放 IC；Run Card 與流動文件需一同附上", highRisk:false},
   ]},
-  {id:"board-load", fcId:"bl", icon:"📥", name:"上板作業 Loading", color:"var(--c-bl)", cls:"mod-bl", steps:[
+  {id:"board-load", fcId:"bl", icon:"📥", name:"上板作業 Loading", color:"var(--c-bl)", cls:"mod-bl", cat:"bi", steps:[
     {id:"bl-1", num:"Step 1", name:"預燒板（BIB）準備",
      detail:"依流動文件指定色帶將 BIB 準備好，至倉儲拿取閒置預燒板。\nBIB 色帶編碼：Yellow=Y；Purple=P；Blue=B",
      risk:"使用錯誤色帶 BIB，造成產品條件不符",
@@ -300,7 +323,7 @@ const MODULES = [
      risk:"Move out 帳務異常，批號資訊錯誤",
      control:"確認站點、機台與事件正確後才確定", highRisk:false},
   ]},
-  {id:"furnace-zone", fcId:"fz", icon:"⚡", name:"爐區作業 Oven", color:"var(--c-fz)", cls:"mod-fz", steps:[
+  {id:"furnace-zone", fcId:"fz", icon:"⚡", name:"爐區作業 Oven", color:"var(--c-fz)", cls:"mod-fz", cat:"bi", steps:[
     {id:"fz-1", num:"Step 1", name:"爐型確認",
      detail:"確認 Run Card 可用機台類型：\n· ANDO → D5/D6/D6M（AN*/AW*/AM*）\n· ANDOD5 → D5（AN*）\n· ANDOD6 → D6/D6M（AW*/AM*）\n· ANDOC7H2 → C7H2（AC*）\n· ANDOC7H3 → C7H3（AF*）\n· H5620 → AS01（唯一一台）",
      risk:"使用不相容爐型，BI 條件不符",
@@ -354,7 +377,7 @@ const MODULES = [
      risk:"BIN 設定錯誤，帳務異常或 Loss 數量不正確",
      control:"確認各 BIN 數量與 Loss 數量後才完成 Move Out", highRisk:false},
   ]},
-  {id:"board-unload", fcId:"bu", icon:"📤", name:"卸板作業 Unloading", color:"var(--c-bu)", cls:"mod-bu", steps:[
+  {id:"board-unload", fcId:"bu", icon:"📤", name:"卸板作業 Unloading", color:"var(--c-bu)", cls:"mod-bu", cat:"bi", steps:[
     {id:"bu-1", num:"Step 1", name:"CIMES Move In",
      detail:"1. 選擇 MVIN/MVOU，輸入批號後按確定\n2. 輸入工號與機台編號，點選查詢\n3. 勾選批號後點選完成",
      risk:"Move in 錯誤批號，帳務異常",
@@ -420,7 +443,7 @@ const MODULES = [
      risk:"BIN 資料錯誤或未達扣留標準，不良品流出",
      control:"確認各 BIN 數量並計算良率；達扣留標準通知領班", highRisk:true},
   ]},
-  {id:"transfer", fcId:"tr", icon:"🚚", name:"轉出作業 Transfer", color:"var(--c-tr)", cls:"mod-tr", steps:[
+  {id:"transfer", fcId:"tr", icon:"🚚", name:"轉出作業 Transfer", color:"var(--c-tr)", cls:"mod-tr", cat:"bi", steps:[
     {id:"tr-1", num:"Step 1", name:"確認子母批狀態（X70 到齊）",
      detail:"方法一（X70）：\nCPIS 查詢 X70，Fab=F1、Hold=*或N、Step=X70\n可查看所有可轉出 CLOT（子母批到齊）。\n\n方法二（BKTOP）：\nCPIS 查詢 BKTOP，輸入廠批點選 Query。\n複製 Customer Lot 後 Query，查看各子母批目前狀況。",
      risk:"子批未到齊即轉出，造成數量短少",
@@ -458,9 +481,187 @@ const MODULES = [
      risk:"Fail BIN 位置或數量設定錯誤",
      control:"確認數量與廢料位置正確後操作", highRisk:false},
   ]},
+  {id:"ht3309", fcId:"t9", icon:"🖥", name:"HT-3309 測試作業 (SOP-I)", color:"var(--c-t9)", cls:"mod-t9", cat:"t9", steps:[
+    {id:"t9-1", num:"Step 1", name:"作業區介紹",
+     detail:"待測IC放置於待測區，已測IC放置於已測區，備料桌供上機前準備。\n⚠ 未依照區域放置，會有混料風險。",
+     risk:"混料",
+     control:"嚴格依區域放置待測/已測IC", highRisk:false},
+    {id:"t9-2", num:"Step 2", name:"確認 Run Card 與 IC",
+     detail:"確認批號：核對 Run Card 批號與 IC 批號是否相符。\n確認數量：IC 數量需與 Run Card 相符。\n確認測試機台與站點：Run Card 站點與機台需一致。\n⚠ 若無正印，則不需核對批號。",
+     risk:"批號或數量錯誤，造成混批或帳務異常",
+     control:"逐項確認批號、數量、站點與機台", highRisk:false},
+    {id:"t9-3", num:"Step 3", name:"檢查 1 TRAY（ID、DATE、外觀），記錄 TYChk",
+     detail:"抽取 1 盤確認：Tray ID、Date Code（年/月）、外觀。\n記錄於 Run Card TYChk 欄位（異常數/檢查數）。",
+     risk:"Tray 異常未發現，影響作業品質",
+     control:"確認 Tray ID、Date Code、外觀並記錄", highRisk:false},
+    {id:"t9-4", num:"Step 4", name:"檢查一盤 IC 外觀，記錄 LDChkB",
+     detail:"取 1 盤 IC，雙手前後左右晃動 Tray 確認 IC 外觀。\n記錄於 Run Card LDChkB 欄位（異常數/一盤IC數）。",
+     risk:"外觀異常 IC 混入正常批",
+     control:"抽檢 1 盤，雙手晃動確認外觀並記錄", highRisk:false},
+    {id:"t9-5", num:"Step 5", name:"確認 E-RUN CARD 的 OI 內容",
+     detail:"確認當站各 BIN 定義。\n確認當站特殊作業指示，並輸入工號記錄。",
+     risk:"特殊作業指示未確認，導致作業異常",
+     control:"確認各 BIN 定義與特殊作業指示，輸入工號留存", highRisk:false},
+    {id:"t9-6", num:"Step 6", name:"備料上機",
+     detail:"1. 將預備上機的 IC 準備在備料桌上，最高堆疊 2 落高度。\n2. 打開 Loader 彈匣蓋。\n3. 雙手拿取 IC 放置 Loader 端。\n4. 取出上蓋。\n5. 蓋上 Loader 彈匣蓋。",
+     risk:"堆疊過高倒塌；IC 取放不當造成損壞",
+     control:"最高堆疊 2 落；雙手取放 IC", highRisk:false},
+    {id:"t9-7", num:"Step 7", name:"GUI Auto Setup（Step 1~4）",
+     detail:"Step 1：開啟電腦桌面的 HT3309 Auto Setup。\nStep 2：點選 Setup，輸入批號後按 Execute 執行 AutoSetup。\nStep 3：等待系統與 Tester 對接，確認 UI 版本是否正確；若有異常通知設備確認。\nStep 4：操作完成後按下 HIDE 縮小至右下角（需要時按 Ctrl+J 還原）。",
+     risk:"UI 版本錯誤，導致測試程式載入異常",
+     control:"確認 UI 版本正確；異常立即通知設備", highRisk:false},
+    {id:"t9-8", num:"Step 8", name:"核對 8 台 AP 與客戶流程卡",
+     detail:"8 台 Tester 需逐一核對 AP：\n1. 至機台後方電腦連點兩次「Scroll Lock」。\n2. 選取要核對的 PC 編號按 Enter。\n3. 顯示 AP 畫面後核對：\n   · 製令單號 ↔ Loading Param\n   · CTL 品名 ↔ IC Controller\n   · Test AP VER 視窗版本號碼\n   · F/W Version ↔ BIN File Name\n4. 確認 AP Loading Param、視窗版本號碼與 E-run card 的 Dual Program、Vers 一致。\n5. 核對完畢在 E-runcard 填入工號。\n⚠ 確認右下角是否有 FTP 圖示，若無通知設備。",
+     risk:"AP 版本或程式不符，測試條件錯誤",
+     control:"8 台逐一核對 AP 所有欄位；確認 FTP 圖示存在", highRisk:true},
+    {id:"t9-9", num:"Step 9", name:"開啟主程式並檢查主程式資訊",
+     detail:"1. 開啟電腦桌面的 HT3309.exe。\n2. 確認項目：\n   · 8 台測試機須亮綠燈\n   · 確認「即時」與「連線」狀態\n   · 工作檔名與 Run Card INI 一致\n   · 投入與產出數量\n3. 核對 E-run card 程式欄位 Handler INI。",
+     risk:"程式設定不符，測試條件錯誤",
+     control:"確認綠燈、即時/連線狀態、INI 一致後再開始", highRisk:false},
+    {id:"t9-10", num:"Step 10", name:"測前 1000 顆良率確認",
+     detail:"依照 Run Card 指示，確認測前 1000 顆良率。\n若低於標準，請通知領班扣留。",
+     risk:"良率過低未即時反映，大量不良品產生",
+     control:"前 1000 顆確認良率；低於標準立即通知領班", highRisk:true},
+    {id:"t9-11", num:"Step 11", name:"檢查一盤 IC 外觀，記錄 LDChkA",
+     detail:"取 1 盤 IC，雙手前後左右晃動 Tray 確認外觀。\n記錄於 Run Card LDChkA 欄位（異常數/一盤IC數）。",
+     risk:"外觀異常 IC 混入正常批",
+     control:"抽檢 1 盤並記錄異常數", highRisk:false},
+    {id:"t9-12", num:"Step 12", name:"尾盤設定",
+     detail:"當機台吸到未滿盤時，確認為尾 Tray。\n按 TRAY EDIT 依尾 Tray IC 擺放位置設定空白位置。\n完成後點選 Update。",
+     risk:"尾盤設定錯誤，造成後續作業異常",
+     control:"確認尾 Tray 後按 TRAY EDIT 設定空白位置再 Update", highRisk:false},
+    {id:"t9-13", num:"Step 13", name:"收料作業",
+     detail:"【取出作業】\n1. 先檢查有無夾盤（檢查空隙）。\n2. 避免下壓力道壓傷 IC。\n3. 人員取出，手托脆盤。\n\n【整理作業】\n1. 確認空盤有無殘留 IC。\n2. Bin 卡標示取出機台 IC。\n3. 依標示位置放在 BIN 架上。\n⚠ 不重測 Bin 上蓋須註明「不可重測」。",
+     risk:"夾盤未確認造成 IC 損壞；空盤殘留 IC 混料",
+     control:"先確認無夾盤再取出；確認空盤無殘留；不重測標示清楚", highRisk:false},
+    {id:"t9-14", num:"Step 14", name:"機台結束作業",
+     detail:"尾 Tray IC 吸完後，機台詢問是否進行 Clean Out。\n確認 Loader 無未測 IC 後，按 Clean Out 進行結料。",
+     risk:"未測 IC 殘留 Loader，造成遺漏或混批",
+     control:"確認 Loader 無未測 IC 後才按 Clean Out", highRisk:false},
+    {id:"t9-15", num:"Step 15", name:"列印測試報表",
+     detail:"1. 點選 Print。\n2. 確認 Lot No、Step 及 Mode 後，點選執行與確認。\n3. 輸入批號，確認系統報表已上傳完成。\n4. 點選確定。",
+     risk:"報表資訊錯誤或未上傳，追溯困難",
+     control:"確認 Lot No、Step、Mode 正確；確認報表上傳完成", highRisk:false},
+    {id:"t9-16", num:"Step 16", name:"併盤作業",
+     detail:"a. 一次只針對同一 BIN 做尾盤合併。\nb. Tray 缺口朝左下。\nc. 取數量少的未滿盤併到數量多的未滿盤內。\nd. IC 擺放方式依 E-Run Card 指示。\ne. 合併後確認 IC 外觀和極性。\nf. 併盤後尾盤需再次確認數量是否正確。",
+     risk:"不同 BIN 混併，或 IC 方向錯誤",
+     control:"一次一 BIN；確認 IC 方向；合併後確認外觀與數量", highRisk:false},
+    {id:"t9-17", num:"Step 17", name:"綁帶作業（Step 1）",
+     detail:"綁帶前不旋轉，先確認三邊（a/b/c）Tray 是否有間隙。\n在不拿起 Tray 的情況下，水平轉 90 度確認第四邊（d）間隙。\n無異常風險再進行綁帶作業。\n⚠ 未綁帶前不可旋轉 Tray。",
+     risk:"間隙未確認，IC 跳動或夾盤",
+     control:"綁帶前確認四邊無間隙再作業", highRisk:false},
+    {id:"t9-18", num:"Step 18", name:"綁帶作業（Step 2）",
+     detail:"一手輕按住成落中央（避免 IC 跳動），一手將魔術帶綁緊並綁於凹槽內側。\n鐵環需落於 Tray 正面中間。\n綁完後依順時鐘方向拿起傾斜，檢查 Tray 盤四面確認沒有間隙（檢查時間需超過 5 秒）。",
+     risk:"綁帶未綁緊，IC 跳動或夾盤",
+     control:"確認魔術帶綁緊；傾斜檢查四面無間隙（>5 秒）", highRisk:false},
+    {id:"t9-19", num:"Step 19", name:"標示 BIN 別",
+     detail:"a. Pass 尾落：標上白色 Bin Card，使用魔術帶捆綁。\nb. Pass 滿落：標上 BIN1 Bin Card。\nc. Fail：標上粉紅色 Bin Card，使用橡皮筋捆綁。",
+     risk:"標示錯誤，良品與不良品混淆",
+     control:"依規定顏色 Bin Card 標示各 BIN 別", highRisk:false},
+    {id:"t9-20", num:"Step 20", name:"確認各 BIN 數量與機台相符",
+     detail:"核對螢幕各 BIN 數量與實物數量是否相符。\n若有不符，通知領班確認。",
+     risk:"BIN 數量不符，帳務或實物異常",
+     control:"逐 BIN 核對螢幕數量與實物；有差異通知領班", highRisk:false},
+    {id:"t9-21", num:"Step 21", name:"黑箱擺放方式",
+     detail:"整落 IC 擺放步驟：由黑箱兩邊先放再放中間。\n避免綁好的 IC 碰撞靜電箱造成夾盤。",
+     risk:"IC 碰撞靜電箱造成夾盤或 IC 損壞",
+     control:"由兩邊先放再放中間，避免碰撞", highRisk:false},
+  ]},
+  {id:"ht5032", fcId:"t2", icon:"🖥", name:"HT-5032 測試作業 (SOP-D)", color:"var(--c-t2)", cls:"mod-t2", cat:"t2", steps:[
+    {id:"t2-1", num:"Step 1", name:"作業區介紹",
+     detail:"待測IC放置於待測區，已測IC放置於已測區，備料桌供上機前準備。\n⚠ 未依照區域放置，會有混料風險。",
+     risk:"混料",
+     control:"嚴格依區域放置待測/已測IC", highRisk:false},
+    {id:"t2-2", num:"Step 2", name:"確認 Run Card 與 IC",
+     detail:"確認批號：核對 Run Card 批號與 IC 批號是否相符。\n確認數量：IC 數量需與 Run Card 相符。\n確認測試機台與站點：Run Card 站點與機台需一致。\n⚠ 若無正印，則不需核對批號。",
+     risk:"批號或數量錯誤，造成混批或帳務異常",
+     control:"逐項確認批號、數量、站點與機台", highRisk:false},
+    {id:"t2-3", num:"Step 3", name:"檢查 1 TRAY（ID、DATE、外觀），記錄 TYChk",
+     detail:"抽取 1 盤確認：Tray ID、Date Code（年/月）、外觀。\n記錄於 Run Card TYChk 欄位（異常數/檢查數）。",
+     risk:"Tray 異常未發現，影響作業品質",
+     control:"確認 Tray ID、Date Code、外觀並記錄", highRisk:false},
+    {id:"t2-4", num:"Step 4", name:"檢查一盤 IC 外觀，記錄 LDChkB",
+     detail:"取 1 盤 IC，雙手前後左右晃動 Tray 確認 IC 外觀。\n記錄於 Run Card LDChkB 欄位（異常數/一盤IC數）。",
+     risk:"外觀異常 IC 混入正常批",
+     control:"抽檢 1 盤，雙手晃動確認外觀並記錄", highRisk:false},
+    {id:"t2-5", num:"Step 5", name:"確認 E-RUN CARD 的 OI 內容",
+     detail:"確認當站各 BIN 定義。\n確認當站特殊作業指示，並輸入工號記錄。",
+     risk:"特殊作業指示未確認，導致作業異常",
+     control:"確認各 BIN 定義與特殊作業指示，輸入工號留存", highRisk:false},
+    {id:"t2-6", num:"Step 6", name:"備料上機",
+     detail:"1. 將預備上機的 IC 準備在備料桌上，最高堆疊 2 落高度。\n2. 打開 Loader 彈匣蓋。\n3. 雙手拿取 IC 放置 Loader 端。\n4. 取出上蓋。\n5. 蓋上 Loader 彈匣蓋。",
+     risk:"堆疊過高倒塌；IC 取放不當造成損壞",
+     control:"最高堆疊 2 落；雙手取放 IC", highRisk:false},
+    {id:"t2-7", num:"Step 7", name:"GUI Auto Setup（Step 1~4）",
+     detail:"Step 1：開啟電腦桌面的 HTAUTO2.exe。\nStep 2：點選 Setup，輸入批號後按 Execute 執行 AutoSetup。\nStep 3：等待系統與 Tester 對接，確認 UI 版本是否正確；若有異常通知設備確認。\nStep 4：操作完成後按下 HIDE 縮小至右下角（需要時按 Ctrl+J 還原）。",
+     risk:"UI 版本錯誤，導致測試程式載入異常",
+     control:"確認 UI 版本正確；異常立即通知設備", highRisk:false},
+    {id:"t2-8", num:"Step 8", name:"核對 4 台 AP 與客戶流程卡",
+     detail:"4 台 Tester 需逐一核對 AP：\n1. 至機台後方電腦連點兩次「Scroll Lock」。\n2. 選取要核對的 PC 編號按 Enter。\n3. 顯示 AP 畫面後核對：\n   · 製令單號 ↔ Loading Param\n   · CTL 品名 ↔ IC Controller\n   · Test AP VER 視窗版本號碼\n   · F/W Version ↔ BIN File Name\n4. 確認 AP Loading Param、視窗版本號碼與 E-run card 的 Dual Program、Vers 一致。\n5. 核對完畢在 E-runcard 填入工號。\n⚠ 確認右下角是否有 FTP 圖示，若無通知設備。",
+     risk:"AP 版本或程式不符，測試條件錯誤",
+     control:"4 台逐一核對 AP 所有欄位；確認 FTP 圖示存在", highRisk:true},
+    {id:"t2-9", num:"Step 9", name:"開啟主程式並檢查主程式資訊",
+     detail:"1. 開啟電腦桌面的 HT5032.exe。\n2. 確認項目：\n   · 4 台測試機須亮綠燈\n   · 確認「實際」與「連線」狀態\n   · 工作檔名與 Run Card INI 一致\n   · 投入與產出數量\n   · 測試溫度\n3. 核對 E-run card 程式欄位 Handler INI。\n4. 點選 START 開始測試。",
+     risk:"程式設定不符，測試條件錯誤",
+     control:"確認綠燈、實際/連線狀態、INI 一致後再開始", highRisk:false},
+    {id:"t2-10", num:"Step 10", name:"測前 1000 顆良率確認",
+     detail:"依照 Run Card 指示，確認測前 1000 顆良率。\n若低於標準，請通知領班扣留。",
+     risk:"良率過低未即時反映，大量不良品產生",
+     control:"前 1000 顆確認良率；低於標準立即通知領班", highRisk:true},
+    {id:"t2-11", num:"Step 11", name:"檢查一盤 IC 外觀，記錄 LDChkA",
+     detail:"取 1 盤 IC，雙手前後左右晃動 Tray 確認外觀。\n記錄於 Run Card LDChkA 欄位（異常數/一盤IC數）。",
+     risk:"外觀異常 IC 混入正常批",
+     control:"抽檢 1 盤並記錄異常數", highRisk:false},
+    {id:"t2-12", num:"Step 12", name:"尾盤設定",
+     detail:"當機台吸到未滿盤時，確認為尾 Tray。\n按 TRAY EDIT 依尾 Tray IC 擺放位置設定空白位置。\n完成後點選 Update。",
+     risk:"尾盤設定錯誤，造成後續作業異常",
+     control:"確認尾 Tray 後按 TRAY EDIT 設定空白位置再 Update", highRisk:false},
+    {id:"t2-13", num:"Step 13", name:"收料作業",
+     detail:"1. 確認空盤有無殘留 IC。\n2. Bin 卡標示取出機台 IC。\n3. 依標示位置放在 BIN 架上。",
+     risk:"空盤殘留 IC 造成混料",
+     control:"確認空盤無殘留；依標示放置 BIN 架", highRisk:false},
+    {id:"t2-14", num:"Step 14", name:"列印測試報表",
+     detail:"1. 點選 Print。\n2. 確認 Lot No、Step 及 Mode 後，點選執行與確認。\n3. 輸入批號，確認系統報表已上傳完成。\n4. 點選確定。",
+     risk:"報表資訊錯誤或未上傳，追溯困難",
+     control:"確認 Lot No、Step、Mode 正確；確認報表上傳完成", highRisk:false},
+    {id:"t2-15", num:"Step 15", name:"併盤作業",
+     detail:"a. 一次只針對同一 BIN 做尾盤合併。\nb. Tray 缺口朝左下。\nc. 取數量少的未滿盤併到數量多的未滿盤內。\nd. IC 擺放方式依 E-Run Card 指示。\ne. 合併後確認 IC 外觀和極性。",
+     risk:"不同 BIN 混併，或 IC 方向錯誤",
+     control:"一次一 BIN；確認 IC 方向；合併後確認外觀", highRisk:false},
+    {id:"t2-16", num:"Step 16", name:"綁帶作業",
+     detail:"Step 1：綁帶前確認三邊（a/b/c）Tray 間隙；水平轉 90 度確認第四邊（d）間隙。\nStep 2：一手輕按住成落中央，一手綁緊魔術帶於凹槽內側；鐵環落於 Tray 正面中間。\n綁完後依順時鐘方向傾斜確認四面無間隙（>5 秒）。",
+     risk:"綁帶未綁緊，IC 跳動或夾盤",
+     control:"確認四邊無間隙後綁帶；傾斜確認四面（>5 秒）", highRisk:false},
+    {id:"t2-17", num:"Step 17", name:"標示 BIN 別",
+     detail:"a. Pass 尾落：標上白色 Bin Card，使用魔術帶捆綁。\nb. Pass 滿落：標上 BIN1 Bin Card。\nc. Fail：標上粉紅色 Bin Card，使用橡皮筋捆綁。",
+     risk:"標示錯誤，良品與不良品混淆",
+     control:"依規定顏色 Bin Card 標示各 BIN 別", highRisk:false},
+    {id:"t2-18", num:"Step 18", name:"黑箱擺放方式",
+     detail:"整落 IC 擺放步驟：由黑箱兩邊先放再放中間。\n避免綁好的 IC 碰撞靜電箱造成夾盤。",
+     risk:"IC 碰撞靜電箱造成夾盤或 IC 損壞",
+     control:"由兩邊先放再放中間，避免碰撞", highRisk:false},
+  ]},
 ];
 
-const TOTAL = MODULES.reduce((s,m)=>s+m.steps.length,0);
+const CAT_INFO = {
+  bi: {title:'📋 BI SOP 作業流程指引', sub:'S-1572-BI-002 Ver.AN（2026/01/21）'},
+  t9: {title:'🖥 HT-3309 測試 SOP', sub:'S-1572-BI-012 Ver.I（2026/01/21）'},
+  t2: {title:'🖥 HT-5032 測試 SOP', sub:'S-1572-L/UL-005 Ver.D（2025/11/26）'},
+};
+let currentCat = 'bi';
+function activeModules(){ return MODULES.filter(m=>m.cat===currentCat); }
+function switchCategory(cat){
+  currentCat = cat;
+  document.querySelectorAll('.cat-btn').forEach(el=>el.classList.remove('active'));
+  document.getElementById('cat-'+cat).classList.add('active');
+  const info = CAT_INFO[cat];
+  document.getElementById('page-title').textContent = info.title;
+  document.getElementById('page-subtitle').textContent = info.sub;
+  document.getElementById('fc-wrap').innerHTML = '';
+  renderChecklist();
+  switchView('list');
+}
+
 let checked = JSON.parse(localStorage.getItem('sop_checked')||'{}');
 
 // ── View switch ──────────────────────────────────
@@ -475,10 +676,12 @@ function switchView(v){
 // ════════════ CHECKLIST ════════════
 function saveChecked(){ localStorage.setItem('sop_checked',JSON.stringify(checked)); }
 function updateProgress(){
-  const done=Object.values(checked).filter(Boolean).length;
-  document.getElementById('prog-bar').style.width=Math.round(done/TOTAL*100)+'%';
-  document.getElementById('prog-text').textContent=`${done} / ${TOTAL} 步驟`;
-  MODULES.forEach(m=>{
+  const mods=activeModules();
+  const total=mods.reduce((s,m)=>s+m.steps.length,0);
+  const done=mods.reduce((s,m)=>s+m.steps.filter(st=>checked[st.id]).length,0);
+  document.getElementById('prog-bar').style.width=total?Math.round(done/total*100)+'%':'0%';
+  document.getElementById('prog-text').textContent=`${done} / ${total} 步驟`;
+  mods.forEach(m=>{
     const badge=document.querySelector(`#mod-${m.id} .module-badge`);
     const mod=document.getElementById(`mod-${m.id}`);
     if(!badge)return;
@@ -490,7 +693,7 @@ function updateProgress(){
 }
 function toggleModule(id){ document.getElementById('mod-'+id).classList.toggle('open'); }
 function expandAll(){
-  MODULES.forEach(m=>{
+  activeModules().forEach(m=>{
     document.getElementById('mod-'+m.id).classList.add('open');
     m.steps.forEach(s=>{
       const el=document.getElementById('step-'+s.id);
@@ -499,7 +702,7 @@ function expandAll(){
   });
 }
 function collapseAll(){
-  MODULES.forEach(m=>{
+  activeModules().forEach(m=>{
     document.getElementById('mod-'+m.id).classList.remove('open');
     m.steps.forEach(s=>{
       const el=document.getElementById('step-'+s.id);
@@ -527,7 +730,7 @@ function resetAll(){
   updateProgress();
 }
 function renderChecklist(){
-  document.getElementById('modules').innerHTML=MODULES.map(m=>`
+  document.getElementById('modules').innerHTML=activeModules().map(m=>`
     <div class="module" id="mod-${m.id}">
       <div class="module-header" onclick="toggleModule('${m.id}')">
         <span class="module-icon">${m.icon}</span>
@@ -586,7 +789,8 @@ function renderFlowchart(){
   // Start
   html+=`<div class="fc-terminal">開始</div>${arrowV()}`;
 
-  MODULES.forEach((m,mi)=>{
+  const mods=activeModules();
+  mods.forEach((m,mi)=>{
     html+=`<div class="fc-module-block ${m.cls}" style="width:100%">
       <div class="fc-module-label">${m.icon} ${m.name}</div>
       <div class="fc-steps-col">`;
@@ -637,17 +841,17 @@ function renderFlowchart(){
     });
 
     html+='</div></div>';
-    if(mi<MODULES.length-1) html+=arrowV();
+    if(mi<mods.length-1) html+=arrowV();
   });
 
   html+=`${arrowV()}<div class="fc-terminal">完成 ✓</div>`;
 
   // Legend
-  html+=`<div style="margin-top:24px;background:#1a1d2e;border-radius:10px;padding:14px 18px;width:100%;border:1px solid #2d3748;font-size:12px;color:#a0aec0">
-    <div style="font-weight:700;margin-bottom:8px;color:#e2e8f0">圖例</div>
+  html+=`<div style="margin-top:24px;background:#f7f8fc;border-radius:10px;padding:14px 18px;width:100%;border:1px solid #e2e8f0;font-size:12px;color:#4a5568">
+    <div style="font-weight:700;margin-bottom:8px;color:#1a202c">圖例</div>
     <div style="display:flex;gap:16px;flex-wrap:wrap">
       <span><span style="display:inline-block;width:10px;height:10px;border-radius:99px;background:var(--red);vertical-align:middle;margin-right:4px"></span>高風險步驟</span>
-      <span><span style="display:inline-block;width:10px;height:10px;border-radius:99px;background:#4a5568;vertical-align:middle;margin-right:4px"></span>一般步驟</span>
+      <span><span style="display:inline-block;width:10px;height:10px;border-radius:99px;background:#a0aec0;vertical-align:middle;margin-right:4px"></span>一般步驟</span>
       <span>點擊步驟 → 查看風險與管控措施</span>
     </div>
   </div>`;

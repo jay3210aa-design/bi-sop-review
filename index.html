@@ -6,285 +6,532 @@
 <title>BI SOP 作業流程指引</title>
 <style>
 :root {
-  --bg:#f0f2f5; --card:#fff; --border:#e2e8f0;
+  --bg:#f7f8fc; --card:#ffffff; --border:#e2e8f0;
   --text:#1a202c; --sub:#718096;
   --accent:#3182ce;
-  --green:#38a169; --green-bg:#f0fff4; --green-border:#c6f6d5;
-  --red:#e53e3e; --red-bg:#fff5f5; --red-border:#fed7d7;
-  --yellow:#d69e2e; --yellow-bg:#fffff0; --yellow-border:#fefcbf;
+  --green:#276749; --green-bg:#f0fff4; --green-border:#9ae6b4;
+  --red:#c53030; --red-bg:#fff5f5; --red-border:#fc8181;
+  --yellow:#d69e2e; --yellow-bg:#fffff0; --yellow-border:#f6e05e;
+  --c-fi:#dd6b20; --c-bl:#3182ce; --c-fz:#e53e3e; --c-bu:#38a169; --c-tr:#805ad5;
 }
 *{margin:0;padding:0;box-sizing:border-box}
 body{background:var(--bg);color:var(--text);font-family:-apple-system,BlinkMacSystemFont,'Segoe UI',sans-serif;font-size:14px;min-height:100vh}
 
-.header{background:#1a202c;color:#e2e8f0;padding:16px 20px}
-.header h1{font-size:17px;font-weight:700}
-.header p{font-size:12px;color:#718096;margin-top:3px}
+/* ── Header ── */
+.header{background:#2d3748;color:#e2e8f0;padding:14px 20px 0;border-bottom:1px solid #e2e8f0}
+.header-top{display:flex;align-items:center;justify-content:space-between;padding-bottom:12px}
+.header h1{font-size:16px;font-weight:700}
+.header p{font-size:11px;color:#4a5568;margin-top:2px}
+.tab-bar{display:flex;gap:4px}
+.tab-btn{padding:6px 16px;border:none;border-radius:6px 6px 0 0;font-size:13px;font-weight:600;cursor:pointer;background:transparent;color:#4a5568;transition:all .15s}
+.tab-btn.active{background:var(--bg);color:var(--text)}
+.tab-btn:hover:not(.active){background:#e2e8f0;color:#4a5568}
 
+/* ── Shared ── */
+.view{display:none}.view.active{display:block}
+
+/* ══════════════ CHECKLIST VIEW ══════════════ */
 .container{max-width:720px;margin:0 auto;padding:20px 16px 40px}
-
-/* progress bar */
 .progress-wrap{background:var(--card);border-radius:10px;padding:14px 18px;margin-bottom:18px;border:1px solid var(--border);display:flex;align-items:center;gap:14px}
 .progress-bar-bg{flex:1;height:8px;background:#e2e8f0;border-radius:4px;overflow:hidden}
 .progress-bar{height:100%;background:var(--accent);border-radius:4px;transition:width .4s}
 .progress-text{font-size:12px;color:var(--sub);white-space:nowrap}
-
-/* module */
-.module{background:var(--card);border-radius:12px;border:1px solid var(--border);margin-bottom:12px;overflow:hidden;box-shadow:0 1px 4px rgba(0,0,0,.06)}
+.module{background:var(--card);border-radius:12px;border:1px solid var(--border);margin-bottom:12px;overflow:hidden;box-shadow:0 2px 8px rgba(0,0,0,.4)}
 .module-header{display:flex;align-items:center;padding:14px 18px;cursor:pointer;gap:12px;user-select:none;transition:background .15s}
-.module-header:hover{background:#f7fafc}
+.module-header:hover{background:#f0f4f8}
 .module-icon{font-size:20px;flex-shrink:0}
 .module-title{flex:1}
-.module-title h2{font-size:14px;font-weight:700}
+.module-title h2{font-size:14px;font-weight:700;color:var(--text)}
 .module-title span{font-size:12px;color:var(--sub)}
 .module-arrow{font-size:12px;color:var(--sub);transition:transform .25s}
 .module.open .module-arrow{transform:rotate(180deg)}
-.module-badge{background:#edf2f7;color:var(--sub);font-size:11px;font-weight:700;padding:2px 8px;border-radius:99px}
+.module-badge{background:#e2e8f0;color:var(--sub);font-size:11px;font-weight:700;padding:2px 8px;border-radius:99px}
 .module-done .module-badge{background:var(--green-bg);color:var(--green)}
-
 .steps{display:none;border-top:1px solid var(--border)}
 .module.open .steps{display:block}
-
-/* step */
-.step{padding:14px 18px;border-bottom:1px solid #f0f2f5;display:flex;gap:12px;align-items:flex-start;transition:background .15s}
+.step{padding:14px 18px;border-bottom:1px solid #e2e8f0;display:flex;gap:12px;align-items:flex-start;transition:background .15s}
 .step:last-child{border-bottom:none}
 .step.checked{background:#f0fff4}
-.step-check{width:22px;height:22px;border:2px solid var(--border);border-radius:6px;flex-shrink:0;cursor:pointer;display:flex;align-items:center;justify-content:center;font-size:13px;transition:all .15s;margin-top:1px}
+.step-check{width:22px;height:22px;border:2px solid #cbd5e0;border-radius:6px;flex-shrink:0;cursor:pointer;display:flex;align-items:center;justify-content:center;font-size:13px;transition:all .15s;margin-top:1px}
 .step.checked .step-check{background:var(--green);border-color:var(--green);color:#fff}
 .step-body{flex:1;min-width:0}
-.step-head{display:flex;align-items:center;gap:8px;margin-bottom:6px;flex-wrap:wrap}
-.step-num{background:#edf2f7;color:var(--sub);font-size:11px;font-weight:700;padding:1px 7px;border-radius:4px}
-.step-name{font-size:13px;font-weight:700}
+.step-head{display:flex;align-items:center;gap:8px;margin-bottom:6px;flex-wrap:wrap;cursor:pointer}
+.step-num{background:#e2e8f0;color:#718096;font-size:11px;font-weight:700;padding:1px 7px;border-radius:4px}
+.step-name{font-size:13px;font-weight:700;color:var(--text)}
 .step-detail{display:none;margin-top:8px}
 .step.expanded .step-detail{display:block}
-.detail-row{font-size:12px;margin-bottom:5px;line-height:1.6;display:flex;gap:6px}
+.detail-row{font-size:12px;margin-bottom:5px;line-height:1.6;display:flex;gap:6px;color:#4a5568}
 .detail-lbl{font-weight:700;flex-shrink:0;white-space:nowrap}
-.lbl-r{color:var(--red)}
-.lbl-g{color:var(--green)}
+.lbl-r{color:var(--red)}.lbl-g{color:var(--green)}
 .kw-row{display:flex;flex-wrap:wrap;gap:4px;margin-top:6px}
-.kw{background:#ebf8ff;color:var(--accent);border-radius:4px;padding:1px 7px;font-size:11px}
+.kw{background:#ebf4ff;color:var(--accent);border-radius:4px;padding:1px 7px;font-size:11px}
 .expand-btn{font-size:11px;color:var(--accent);cursor:pointer;margin-top:4px;display:inline-block}
 .expand-btn:hover{text-decoration:underline}
-
+.toggle-all-btn{flex:1;padding:8px;border-radius:8px;border:1px solid var(--border);background:var(--card);font-size:12px;font-weight:600;cursor:pointer;color:#4a5568;transition:all .15s}
+.toggle-all-btn:hover{background:#e2e8f0;color:var(--text)}
 .reset-btn{display:block;width:100%;margin-top:16px;padding:10px;border-radius:8px;border:1px solid var(--border);background:var(--card);font-size:13px;cursor:pointer;color:var(--sub)}
-.reset-btn:hover{background:#f7fafc}
+.reset-btn:hover{background:#f0f4f8}
 
-.footer{text-align:center;font-size:11px;color:var(--sub);margin-top:8px}
+/* ══════════════ FLOWCHART VIEW ══════════════ */
+.fc-wrap{max-width:560px;margin:0 auto;padding:24px 16px 48px;display:flex;flex-direction:column;align-items:center}
 
+/* nodes */
+.fc-terminal{background:#4a5568;color:#fff;border-radius:99px;padding:8px 28px;font-size:13px;font-weight:700;letter-spacing:.5px}
+.fc-arrow-v{width:2px;height:28px;background:#a0aec0;position:relative;flex-shrink:0}
+.fc-arrow-v::after{content:'';position:absolute;bottom:-6px;left:-5px;border:6px solid transparent;border-top-color:#a0aec0;border-bottom:none}
+
+/* module block */
+.fc-module-block{width:100%;border-radius:12px;overflow:hidden;box-shadow:0 4px 12px rgba(0,0,0,.5)}
+.fc-module-label{padding:8px 16px;font-size:13px;font-weight:700;color:#fff;display:flex;align-items:center;gap:8px}
+.fc-steps-col{background:#f7f8fc;border:2px solid;border-top:none;border-radius:0 0 10px 10px;display:flex;flex-direction:column;align-items:center;padding:12px 16px 4px}
+.fc-step-box{width:100%;border-radius:8px;border:1.5px solid;padding:9px 14px;margin-bottom:8px;cursor:pointer;transition:all .15s;display:flex;align-items:center;gap:10px}
+.fc-step-box:hover{opacity:.85;transform:translateY(-1px)}
+.fc-step-box .snum{font-size:11px;font-weight:700;padding:1px 7px;border-radius:4px;white-space:nowrap;flex-shrink:0}
+.fc-step-box .sname{font-size:12px;font-weight:600;line-height:1.4;color:var(--text)}
+.fc-step-box .risk-dot{width:8px;height:8px;border-radius:99px;flex-shrink:0;margin-left:auto}
+
+/* inner arrow */
+.fc-inner-arrow{width:2px;height:16px;background:#a0aec0;position:relative;flex-shrink:0;margin-bottom:8px}
+.fc-inner-arrow::after{content:'';position:absolute;bottom:-5px;left:-4px;border:5px solid transparent;border-top-color:#a0aec0;border-bottom:none}
+
+/* decision diamond */
+.fc-decision-wrap{display:flex;flex-direction:column;align-items:center;width:100%;margin-bottom:8px}
+.fc-diamond-row{display:flex;align-items:center;gap:0;width:100%}
+.fc-diamond{width:56px;height:56px;background:var(--red-bg);border:2px solid var(--red);transform:rotate(45deg);flex-shrink:0;display:flex;align-items:center;justify-content:center;margin:0 12px}
+.fc-diamond span{transform:rotate(-45deg);font-size:10px;font-weight:700;color:var(--red);text-align:center;line-height:1.3;white-space:nowrap}
+.fc-branch{flex:1;display:flex;flex-direction:column;align-items:center}
+.fc-branch-label{font-size:11px;font-weight:700;margin-bottom:6px}
+.fc-branch-box{background:var(--red-bg);border:1.5px solid var(--red);border-radius:8px;padding:6px 12px;font-size:12px;font-weight:600;color:var(--red);text-align:center}
+.fc-join-line{width:100%;height:2px;background:#a0aec0;margin:8px 0}
+
+/* module colors */
+.mod-fi .fc-module-label{background:var(--c-fi)}
+.mod-fi .fc-steps-col{border-color:var(--c-fi)}
+.mod-fi .fc-step-box{border-color:#dd6b20;background:#fef3e2}
+.mod-fi .fc-step-box .snum{background:#dd6b20;color:#fff}
+
+.mod-bl .fc-module-label{background:var(--c-bl)}
+.mod-bl .fc-steps-col{border-color:var(--c-bl)}
+.mod-bl .fc-step-box{border-color:#3182ce;background:#ebf4ff}
+.mod-bl .fc-step-box .snum{background:#3182ce;color:#fff}
+
+.mod-fz .fc-module-label{background:var(--c-fz)}
+.mod-fz .fc-steps-col{border-color:var(--c-fz)}
+.mod-fz .fc-step-box{border-color:#e53e3e;background:#fff5f5}
+.mod-fz .fc-step-box .snum{background:#e53e3e;color:#fff}
+
+.mod-bu .fc-module-label{background:var(--c-bu)}
+.mod-bu .fc-steps-col{border-color:var(--c-bu)}
+.mod-bu .fc-step-box{border-color:#38a169;background:#f0fff4}
+.mod-bu .fc-step-box .snum{background:#38a169;color:#fff}
+
+.mod-tr .fc-module-label{background:var(--c-tr)}
+.mod-tr .fc-steps-col{border-color:var(--c-tr)}
+.mod-tr .fc-step-box{border-color:#805ad5;background:#faf5ff}
+.mod-tr .fc-step-box .snum{background:#805ad5;color:#fff}
+
+/* modal */
+.modal-bg{display:none;position:fixed;inset:0;background:rgba(0,0,0,.75);z-index:9000;align-items:center;justify-content:center}
+.modal-bg.open{display:flex}
+.modal-box{background:#ffffff;border:1px solid #e2e8f0;border-radius:14px;padding:24px;width:460px;max-width:92vw;max-height:85vh;overflow-y:auto;box-shadow:0 8px 32px rgba(0,0,0,.15)}
+.modal-box h3{font-size:15px;font-weight:700;margin-bottom:4px;color:var(--text)}
+.modal-meta{font-size:12px;color:var(--sub);margin-bottom:14px}
+.modal-row{font-size:13px;margin-bottom:10px;line-height:1.7;color:#4a5568}
+.modal-row strong{font-weight:700}
+.modal-close{float:right;background:none;border:none;font-size:18px;cursor:pointer;color:var(--sub);line-height:1}
+.modal-close:hover{color:var(--text)}
+.modal-kw{display:flex;flex-wrap:wrap;gap:4px;margin-top:10px}
+.modal-kw span{background:#ebf4ff;color:var(--accent);border-radius:4px;padding:2px 8px;font-size:12px}
+.modal-detail{font-size:12px;line-height:1.9;color:#4a5568;white-space:pre-line;background:#f7f8fc;border-radius:8px;padding:10px 12px;margin-top:6px;border-left:3px solid var(--accent)}
+.detail-steps{font-size:12px;line-height:1.9;color:#4a5568;white-space:pre-line;background:#f7f8fc;border-radius:6px;padding:8px 10px;margin-bottom:6px;border-left:3px solid var(--accent)}
+
+.footer{text-align:center;font-size:11px;color:var(--sub);padding:0 0 8px}
 @media(max-width:600px){
-  .header{padding:12px 16px}
-  .container{padding:16px 12px 32px}
-  .module-header{padding:12px 14px}
-  .step{padding:12px 14px}
+  .header-top{flex-direction:column;align-items:flex-start;gap:8px}
+  .container,.fc-wrap{padding:14px 10px 32px}
 }
 </style>
 </head>
 <body>
 
 <div class="header">
-  <h1>📋 BI SOP 作業流程指引</h1>
-  <p>S-1572-BI-002 Ver.AN（2026/01/21）｜點選步驟展開查看風險與管控措施</p>
+  <div class="header-top">
+    <div>
+      <h1>📋 BI SOP 作業流程指引</h1>
+      <p>S-1572-BI-002 Ver.AN（2026/01/21）</p>
+    </div>
+    <div class="tab-bar">
+      <button class="tab-btn active" id="tab-list" onclick="switchView('list')">☰ 清單</button>
+      <button class="tab-btn" id="tab-flow" onclick="switchView('flow')">⬇ 流程圖</button>
+    </div>
+  </div>
 </div>
 
-<div class="container">
-  <div class="progress-wrap">
-    <div class="progress-bar-bg"><div class="progress-bar" id="prog-bar" style="width:0%"></div></div>
-    <span class="progress-text" id="prog-text">0 / 17 步驟</span>
+<!-- ── CHECKLIST VIEW ── -->
+<div class="view active" id="view-list">
+  <div class="container">
+    <div class="progress-wrap">
+      <div class="progress-bar-bg"><div class="progress-bar" id="prog-bar" style="width:0%"></div></div>
+      <span class="progress-text" id="prog-text">0 / 0 步驟</span>
+    </div>
+    <div style="display:flex;gap:8px;margin-bottom:10px">
+      <button class="toggle-all-btn" onclick="expandAll()">▼ 全部展開</button>
+      <button class="toggle-all-btn" onclick="collapseAll()">▲ 全部收合</button>
+    </div>
+    <div id="modules"></div>
+    <button class="reset-btn" onclick="resetAll()">↺ 重置所有勾選</button>
+    <div class="footer" style="margin-top:16px">勾選狀態儲存於本機瀏覽器</div>
   </div>
-  <div id="modules"></div>
-  <button class="reset-btn" onclick="resetAll()">↺ 重置所有勾選</button>
-  <div class="footer" style="margin-top:16px">資料僅儲存於本機瀏覽器，關閉後保留</div>
+</div>
+
+<!-- ── FLOWCHART VIEW ── -->
+<div class="view" id="view-flow">
+  <div class="fc-wrap" id="fc-wrap"></div>
+</div>
+
+<!-- Detail Modal -->
+<div class="modal-bg" id="modal">
+  <div class="modal-box">
+    <button class="modal-close" onclick="closeModal()">✕</button>
+    <h3 id="m-name"></h3>
+    <div class="modal-meta" id="m-meta"></div>
+    <div class="modal-row" id="m-detail-wrap">
+      <strong>📋 作業步驟：</strong>
+      <div class="modal-detail" id="m-detail"></div>
+    </div>
+    <div class="modal-row"><strong style="color:var(--red)">⚠ 風險：</strong><span id="m-risk"></span></div>
+    <div class="modal-row"><strong style="color:var(--green)">✓ 管控措施：</strong><span id="m-ctrl"></span></div>
+    <div class="modal-kw" id="m-kw" style="display:none"></div>
+  </div>
 </div>
 
 <script>
+// ── 資料 ──────────────────────────────────────────
 const MODULES = [
-  {
-    id:"furnace-in", icon:"🔥", name:"排爐作業", steps:[
-      {
-        id:"fi-1", num:"Step 1", name:"確認 Run Card（BI條件）",
-        risk:"BI 條件錯誤、產品進錯爐型",
-        control:"詳讀 Run Card，確認電壓、溫度、時間、程式與產品相符",
-        keywords:["Run Card","BI條件","拆批","確認條件"],
-      },
-      {
-        id:"fi-6", num:"Step 6", name:"IC 分量與附文件（特殊指示隔離）",
-        risk:"特殊 IC（實驗品、限制品）未隔離隨貨流入作業",
-        control:"特殊 IC 須交幹部管理，不得與正常批隨貨；附中英對照指示單",
-        keywords:["分量","附文件","實驗IC","特殊IC","BIN8","隨貨"],
-      },
-    ]
-  },
-  {
-    id:"board-load", icon:"📥", name:"上板作業", steps:[
-      {
-        id:"bl-2", num:"Step 2", name:"確認流動文件（型號、批號、數量、BI條件）",
-        risk:"流動文件與 Run Card 不符，導致進錯批或錯誤條件作業",
-        control:"確認流動文件上 P/N、Lot no、Q'ty 與 Run Card 完全一致",
-        keywords:["流動文件","型號","批號","P/N","Lot no","Q'ty"],
-      },
-      {
-        id:"bl-3", num:"Step 3", name:"CIMES Move In（刷箱號確認批號）",
-        risk:"未刷箱號導致取錯別批黑箱，造成混批",
-        control:"刷取小 Run Card 下方箱號條碼；確認各欄位資料後按 F7 確認",
-        keywords:["CIMES","Move In","箱號","BoxID","刷取","F7"],
-      },
-      {
-        id:"bl-4", num:"Step 4", name:"檢查預燒板（BIB）色帶與 Socket",
-        risk:"用錯色帶 BIB 或 IC 插入損壞 Socket 造成 IC loss",
-        control:"確認 BIB 色帶正確且 Socket 無損，異常需送修板間",
-        keywords:["BIB","預燒板","色帶","Socket","插座"],
-      },
-      {
-        id:"bl-9", num:"Step 9", name:"確認 IC 數量",
-        risk:"數量異常未發現，影響良率計算或造成 loss",
-        control:"確認來貨數量與 Run Card 相符，填寫大 Run Card QTYIN 欄位",
-        keywords:["數量","QTYIN","來貨數量","確認數量"],
-      },
-      {
-        id:"bl-11", num:"Step 11", name:"IC 外觀抽檢（1 盤）",
-        risk:"外觀異常 IC 混入正常批，影響品質",
-        control:"抽檢 1 盤 IC 外觀，確認正印與 Run Card 相符；≥3ea 異常需通知領班",
-        keywords:["外觀","抽檢","正印","LDCHKB","≥3ea"],
-      },
-      {
-        id:"bl-12", num:"Step 12", name:"確認 E-RUN CARD OI 特殊作業指示（簽名留存）",
-        risk:"特殊作業指示未確認，OP 依正常流程作業導致異常",
-        control:"確認當站各 BIN 定義與特殊作業指示，輸入工號留存紀錄",
-        keywords:["OI","E-Run Card","特殊指示","BIN定義","工號"],
-      },
-      {
-        id:"bl-15", num:"Step 15", name:"檢查首板上板狀況",
-        risk:"IC 未完全插入 Socket 導致測試異常或 IC 損壞",
-        control:"確認首板 IC 完全插入 Socket；≥5ea 上不好需通知領班",
-        keywords:["首板","上板狀況","上不好","≥5ea"],
-      },
-    ]
-  },
-  {
-    id:"furnace-zone", icon:"⚡", name:"爐區作業", steps:[
-      {
-        id:"fz-2", num:"Step 2", name:"確認 Run Card 指示（專爐限制）",
-        risk:"產品進入不相容爐型，造成測試條件不符或 IC 損壞",
-        control:"確認產品是否有專爐限制，詳讀 Run Card 注意事項",
-        keywords:["專爐","限制","爐型","氮氣","ANDO"],
-      },
-      {
-        id:"fz-8", num:"Step 8", name:"Pretest 驗爐——排除異常 IC",
-        risk:"Pretest Fail 數量異常未停爐分析，直接進行 Burn-In 造成大量不良品",
-        control:"Fail 數量異常需暫停；逐板確認 Fail 位置、交換位置重測；確認 Pass 數正確且 Fail 歸零後才啟動 Burn-In",
-        keywords:["Pretest","Pretest Fail","驗爐","Fail IC","MapMask","重測"],
-      },
-      {
-        id:"fz-10", num:"Step 10", name:"Burn-In 巡檢系統（每 2 小時）",
-        risk:"爐中異常未及時發現，擴大損失",
-        control:"系統每 2 小時巡檢一次，確認爐中無異常記錄",
-        keywords:["巡檢","BI巡檢","E-System","BIGroup","2小時"],
-      },
-      {
-        id:"fz-12", num:"Step 12", name:"確認 BI 異常單（領班 / EE 簽核）",
-        risk:"爐中異常未走完簽核流程，造成異常品流入下站",
-        control:"出爐後確認 CPIS 是否有異常單，依 Running EQ/PL 流程完成簽核",
-        keywords:["異常單","CPIS","簽核","領班確認","EE確認"],
-      },
-    ]
-  },
-  {
-    id:"board-unload", icon:"📤", name:"卸板作業", steps:[
-      {
-        id:"bu-6", num:"Step 6", name:"確認首板 IC 批號（防混料）",
-        risk:"卸板時批號未確認，造成混批",
-        control:"卸板首板確認 1ea IC 正印與 Run Card 相符；1 個工作桌面只能有 1 筆 Lot",
-        keywords:["首板","IC批號","正印","1ea","卸板首板"],
-      },
-      {
-        id:"bu-7", num:"Step 7", name:"BGA 卸板——先背面後正面，確認 IC shift",
-        risk:"BGA 產品 IC shift 未發現，造成外觀不良品流出",
-        control:"BGA 產品卸板首板：先查背面再查正面，注意是否有 IC shift",
-        keywords:["BGA","IC Shift","背面","正面","基板"],
-      },
-      {
-        id:"bu-16", num:"Step 16", name:"CIMES 結料（BIN 資料確認 / 扣留判斷）",
-        risk:"BIN 資料錯誤或未達扣留標準未扣留，造成不良品流出",
-        control:"確認各 BIN 數量並計算良率；達扣留標準需通知領班；需 RE-BI 依 Run Card 指示",
-        keywords:["結料","BIN資料","扣留","良率","RE-BI","Move Out"],
-      },
-    ]
-  },
-  {
-    id:"transfer", icon:"🚚", name:"轉出作業", steps:[
-      {
-        id:"tr-1", num:"Step 1", name:"確認子母批狀態（X70 到齊）",
-        risk:"子批未到齊即轉出，造成數量短少",
-        control:"確認 CPIS X70 子母批到齊後才執行合批轉出",
-        keywords:["子母批","X70","BKTOP","CLOT","轉出","合批"],
-      },
-    ]
-  },
+  {id:"dispatch", fcId:"fi", icon:"🔥", name:"排爐作業 Dispatch", color:"var(--c-fi)", cls:"mod-fi", steps:[
+    {id:"fi-1", num:"Step 1", name:"確認 Run Card（BI 條件）",
+     detail:"確認 Run Card 指示的 BI 條件（電壓、溫度、時間、程式）是否正確。",
+     risk:"BI 條件錯誤，導致燒入錯誤溫度/時間/程式",
+     control:"逐項確認 Run Card 上的電壓、溫度、時間與程式", highRisk:false},
+    {id:"fi-2", num:"Step 2", name:"CIMES 拆批作業",
+     detail:"1. 開啟 CPIS 首頁，登入 CIMES（帳密：BIT01）\n2. 選取 SPLT 功能\n3. 輸入工號、母批批號、分批批號、分批數量\n4. 點選確認",
+     risk:"批號或數量輸入錯誤，導致帳務異常",
+     control:"確認母批批號與分批批號正確，輸入正確數量後確認", highRisk:false},
+    {id:"fi-3", num:"Step 3", name:"列印分批 Run Card",
+     detail:"1. 點選分批發卡\n2. 選擇廠別與 Oper\n3. 點選確定\n4. 選擇批號\n5. 點選列印",
+     risk:"Run Card 印錯，流通文件與實物不符",
+     control:"列印前確認廠別、Oper 與批號正確", highRisk:false},
+    {id:"fi-4", num:"Step 4", name:"CIMES 發料",
+     detail:"1. 輸入工號\n2. 輸入站點\n3. 選取發料批號\n4. 點選確認",
+     risk:"發料批號錯誤，帳務異常",
+     control:"確認發料批號與實物相符後確認", highRisk:false},
+    {id:"fi-5", num:"Step 5", name:"排爐系統列印流動文件",
+     detail:"1. 選擇 BI dispatch，選擇廠別\n2. 輸入搜尋條件，點選 Load Data\n3. 選取批號，點選 Make Travel 文件\n4. 選擇 OVEN 與程式，選擇 LUL 程式\n5. 點選 OK → 點選開啟",
+     risk:"流動文件條件錯誤，導致作業條件不符",
+     control:"確認 OVEN 號與程式名稱正確後列印", highRisk:false},
+    {id:"fi-6", num:"Step 6", name:"IC 分量與附文件",
+     detail:"1. 找出作業批\n2. 確認 Run Card 批號正確\n3. 以雙手取放分量 IC\n4. 附上 Run Card 與流動文件",
+     risk:"附錯文件造成混批；特殊 IC 未隔離隨貨流入",
+     control:"雙手取放 IC；Run Card 與流動文件需一同附上", highRisk:false},
+  ]},
+  {id:"board-load", fcId:"bl", icon:"📥", name:"上板作業 Loading", color:"var(--c-bl)", cls:"mod-bl", steps:[
+    {id:"bl-1", num:"Step 1", name:"預燒板（BIB）準備",
+     detail:"依流動文件指定色帶將 BIB 準備好，至倉儲拿取閒置預燒板。\nBIB 色帶編碼：Yellow=Y；Purple=P；Blue=B",
+     risk:"使用錯誤色帶 BIB，造成產品條件不符",
+     control:"對照流動文件確認 BIB 色帶編碼", highRisk:false},
+    {id:"bl-2", num:"Step 2", name:"確認流動文件（BI 條件）",
+     detail:"確認 BI 流動文件上的型號、批號、數量及預燒條件（電壓、溫度、時間、程式），需與 Run Card 資料相符。",
+     risk:"流動文件與 Run Card 不符，導致進錯批或錯誤條件",
+     control:"確認 P/N、Lot no、Q'ty 與 Run Card 完全一致", highRisk:false},
+    {id:"bl-3", num:"Step 3", name:"CIMES Move In（刷箱號確認批號）",
+     detail:"1. 選擇 MVIN/MVOU，輸入批號，登入帳密：BIT01\n2. 輸入工號與機台號碼\n3. 刷取小 Run Card 下方箱號條碼\n   ⚠ 未刷取箱號有取錯別批黑箱的風險\n4. 確認各欄位資料後按 F7 確認\n   ⚠ 未確認基本資料會有 move 錯帳的情形",
+     risk:"未刷箱號取錯別批黑箱，造成混批",
+     control:"刷取小 Run Card 箱號條碼；確認各欄位後按 F7", highRisk:true},
+    {id:"bl-4", num:"Step 4", name:"檢查預燒板測試插座",
+     detail:"確認 BIB 使用正確色帶並檢查 Socket 有無損壞或異常。\n若有異常需將 BIB 狀態改為 DOWN 並送至維修間。\n⚠ 未確認 BIB 狀況，可能會用錯色帶或 IC 上到損壞 Socket 導致 LOSS 產生",
+     risk:"用錯色帶或 IC 插入損壞 Socket 造成 IC loss",
+     control:"確認 BIB 色帶正確且 Socket 無損，異常需送修板間", highRisk:true},
+    {id:"bl-5", num:"Step 5", name:"檢查預燒板色塊",
+     detail:"上板前確認 BIB 色塊標示是否清晰。\n若色塊不清需送修板間更新色塊。\n⚠ 未維護色塊，久了會退色，難以辨識",
+     risk:"色塊退色難以辨識，使用錯誤 BIB",
+     control:"確認色塊清晰可辨識，不清則送修更新", highRisk:false},
+    {id:"bl-6", num:"Step 6", name:"清潔預燒板插座",
+     detail:"BIB 置於工作桌 Socket 面朝下傾斜 60~80 度。\n以空氣槍由左至右、由上至下清潔。\n避免金手指碰觸工作桌。\n確認無雜物、金屬殘渣或殘留 IC。",
+     risk:"BIB 插座殘留異物或 IC，造成污染與混料",
+     control:"空氣槍清潔前後確認無殘留；金手指勿碰觸桌面", highRisk:false},
+    {id:"bl-7", num:"Step 7", name:"檢查機台信號燈",
+     detail:"確認機台狀態指示燈為黃燈（閒置）才可作業。\n燈號：綠燈=生產、黃燈=閒置、紅燈=中斷\n確認機台 ESD LED 燈正常。",
+     risk:"機台非閒置狀態即開始作業，造成異常",
+     control:"確認黃燈亮起且 ESD LED 正常後才作業", highRisk:false},
+    {id:"bl-8", num:"Step 8", name:"檢查機台治具",
+     detail:"確認機台治具是否與 Run Card 產品相符並清潔治具。",
+     risk:"治具型號不符，IC 上板錯位",
+     control:"對照 Run Card 確認治具型號並清潔", highRisk:false},
+    {id:"bl-9", num:"Step 9", name:"確認 IC 數量",
+     detail:"確認來貨數量與 Run Card 是否相符。",
+     risk:"數量異常未發現，影響良率或造成 loss",
+     control:"確認來貨數量與 Run Card 相符", highRisk:false},
+    {id:"bl-10", num:"Step 10", name:"檢查 1 Tray（ID、Date Code、外觀）",
+     detail:"檢查 1 Tray ID、Date Code 與外觀，記錄於 Run Card TYChkB 欄位。\n打勾標記來貨 Tray ID，使用整批一致的 Tray 盤。",
+     risk:"Tray ID 或 Date Code 不符，混批風險",
+     control:"確認 Tray ID 與 Date Code 符合 Run Card，並記錄", highRisk:false},
+    {id:"bl-11", num:"Step 11", name:"檢查一盤 IC 外觀",
+     detail:"檢查 1 盤 IC 外觀，記錄於 Run Card LDChkB 欄位。\n雙手前後左右晃動 Tray 確認 IC 外觀。\n若 ≥3ea 異常需通知領班。\n確認 1 顆 IC 正印與 Run Card 相符。",
+     risk:"外觀異常 IC 混入正常批，影響品質",
+     control:"抽檢 1 盤，確認正印與 Run Card 相符；≥3ea 通知領班", highRisk:false},
+    {id:"bl-12", num:"Step 12", name:"確認 E-RUN CARD OI 內容",
+     detail:"確認當站各 BIN 定義。\n確認當站特殊作業指示，並輸入工號記錄。",
+     risk:"特殊作業指示未確認，依正常流程作業導致異常",
+     control:"確認各 BIN 定義與特殊作業指示，輸入工號留存紀錄", highRisk:true},
+    {id:"bl-13", num:"Step 13", name:"備料上機（IC & BIB）",
+     detail:"【IC 備料】\n1. 依規範最高堆疊 2 落高度\n2. 將 IC 取出放置桌上\n3. 取下魔術帶\n4. 開門放入機台 Loader 端\n\n【BIB 備料】\n1. 確認卡榫為關閉狀態\n2. 打開推車檔板，開啟卡榫\n3. 推入 BIB\n4. 推車檔板歸位",
+     risk:"IC 堆疊過高倒塌；BIB 卡榫未關造成作業異常",
+     control:"最高堆疊 2 落；確認 BIB 卡榫狀態後推入", highRisk:false},
+    {id:"bl-14", num:"Step 14", name:"設定上板程式",
+     detail:"1. 選擇自動操作\n2. 刷 Run Card 條碼輸入批號\n3. 輸入工號並確認程式\n4. 選擇上板模式\n5. 點選 START 啟動",
+     risk:"程式選錯，IC 上板條件不符",
+     control:"刷條碼確認批號後確認程式名稱再啟動", highRisk:false},
+    {id:"bl-15", num:"Step 15", name:"檢查首板上板狀況",
+     detail:"確認首板 BIB 的 IC 是否完全插入測試插座。\n若 ≥5ea 上不好需通知領班確認。\n確認上板產品數量與 Run Card 一致，遺失 IC 立即知會領班。\n\nNG → 通知領班處理\nPASS → 繼續作業",
+     risk:"IC 未完全插入 Socket，導致測試異常或 IC 損壞",
+     control:"確認首板 IC 完全插入 Socket；≥5ea 上不好通知領班", highRisk:false},
+    {id:"bl-16", num:"Step 16", name:"CIMES Move Out 下機",
+     detail:"1. 點選 MVIN/MVOU 並輸入批號\n2. 確認站點、機台與事件後，選取批號點選確定",
+     risk:"Move out 帳務異常，批號資訊錯誤",
+     control:"確認站點、機台與事件正確後才確定", highRisk:false},
+  ]},
+  {id:"furnace-zone", fcId:"fz", icon:"⚡", name:"爐區作業 Oven", color:"var(--c-fz)", cls:"mod-fz", steps:[
+    {id:"fz-1", num:"Step 1", name:"爐型確認",
+     detail:"確認 Run Card 可用機台類型：\n· ANDO → D5/D6/D6M（AN*/AW*/AM*）\n· ANDOD5 → D5（AN*）\n· ANDOD6 → D6/D6M（AW*/AM*）\n· ANDOC7H2 → C7H2（AC*）\n· ANDOC7H3 → C7H3（AF*）\n· H5620 → AS01（唯一一台）",
+     risk:"使用不相容爐型，BI 條件不符",
+     control:"對照 Run Card 確認可用爐型再選機", highRisk:false},
+    {id:"fz-2", num:"Step 2", name:"確認 Run Card 指示（專爐/氮氣）",
+     detail:"確認產品是否有專爐限制，詳讀 Run Card 注意事項。\n若程式欄位要求開啟氮氣，確認氮氣流量表浮球下緣位於綠色區域內。",
+     risk:"產品進入不相容爐型，或氮氣未開造成條件不符",
+     control:"確認專爐限制與氮氣需求後再作業", highRisk:false},
+    {id:"fz-3", num:"Step 3", name:"CIMES 變更狀態 Setup",
+     detail:"1. 點選變更機台狀態，輸入工號\n2. 選擇事件「BGN-SETUP」\n3. 輸入 Job Code「BI1」、工號與每批批號",
+     risk:"CIMES 狀態未切換至 Setup，帳務異常",
+     control:"確認選擇 BGN-SETUP 事件並輸入正確 Job Code", highRisk:false},
+    {id:"fz-4", num:"Step 4", name:"檢查爐子狀態燈",
+     detail:"確認爐子狀態燈號全關才可插板進爐。\n若發現燈號異常，需通知輪班設備確認。",
+     risk:"爐子未就緒即插板，造成設備異常或 IC 損壞",
+     control:"確認狀態燈全關後才插板；有異常通知設備", highRisk:true},
+    {id:"fz-5", num:"Step 5", name:"D6/C7 自動選擇 D5/D6 模式",
+     detail:"（僅 D6/C7 爐需做此步驟）\n1. 確認 Shortcut to TBTControl 已開啟\n2. CIMES Setup 完成後會自動啟動 OS select app\n3. 刷取 Run Card 批號條碼，自動選擇 D5 或 D6 mode",
+     risk:"模式選錯，BI 條件不符",
+     control:"確認 TBTControl 開啟；刷條碼讓系統自動選擇模式", highRisk:false},
+    {id:"fz-6", num:"Step 6", name:"推板進爐",
+     detail:"1. 開啟爐門\n2. RACK 移至電動推車\n3. 調整高度（升降時勿移動）\n4. 推板進爐",
+     risk:"推板過程不穩，BIB 損壞或 IC 脫落",
+     control:"調整高度到位後再推入；升降時勿移動推車", highRisk:false},
+    {id:"fz-7", num:"Step 7", name:"設定程式",
+     detail:"步驟 1：\n· 點選 Load，系統自動帶出批號與程式名稱\n\n步驟 2：\n· 核對程式名稱、Check Sum、Code、Test Type\n· 輸入工號，確認批號與程式",
+     risk:"程式設定錯誤，BI 條件不符",
+     control:"核對程式名稱與 Check Sum 後輸入工號確認", highRisk:false},
+    {id:"fz-8", num:"Step 8", name:"Pretest 驗爐——排除異常 IC",
+     detail:"步驟 1：\n· 點選 Test 進行 Pretest\n· 點選 Summary 查看結果\n· 確認批號數量後 EXIT\n\n步驟 2：\n· 點選 Mapmask 逐板排除 Fail IC\n· 確認每板 Fail 位置\n· 取出 BIB 到工作桌，交換 IC 位置重測\n\n步驟 3：\n· 點選 PRETEST 重新測試\n· 確認 Pass 數量正確且 Fail 數量為 0\n· 點選 TEST 開始 Burn-In",
+     risk:"Pretest Fail 未處理直接 BI，大量不良品產生",
+     control:"Fail 必須逐板排除並重測；確認 Fail=0 才啟動 BI", highRisk:true},
+    {id:"fz-9", num:"Step 9", name:"CIMES 自動 Move In",
+     detail:"Pretest 完成後 CIMES 自動結束 Setup 並自動 Move In。\n選取 Pretest Fail Bin、輸入數量，確認無誤後按 OK。",
+     risk:"Fail 數量輸入錯誤，帳務異常",
+     control:"確認 Fail Bin 與數量正確後才按 OK", highRisk:false},
+    {id:"fz-10", num:"Step 10", name:"Burn-In 巡檢系統（每 2 小時）",
+     detail:"1. 選擇 CPIS 第 2 顆球 E-System\n2. 選擇 BIGroup\n3. 輸入查詢條件並確認巡檢資料\n系統每 2 小時自動巡檢一次。",
+     risk:"爐中異常未及時發現，擴大損失",
+     control:"每 2 小時確認巡檢資料無異常", highRisk:false},
+    {id:"fz-11", num:"Step 11", name:"出爐轉檔（MAP 報表）",
+     detail:"BI 完成後顯示 TEST complete。至轉檔電腦開啟 BinMap.exe：\n1. 選取模式與爐型與爐號，點選查詢\n2. 轉檔順序：先 Normal 後 Backup\n3. 選擇檔案名稱，點選 Execute\n4. 輸入批量、Pretest Fail Bin 與數量\n5. 點選 Print 預覽 MAP\n\n確認 MAP 批號、數量、BI 時間與異常訊息。\n若有異常需至 CPIS 列印異常單，並依指示作業。",
+     risk:"MAP 資料異常未發現，不良品流入下站",
+     control:"確認 MAP 批號、數量與 BI 時間；有異常列印異常單", highRisk:false},
+    {id:"fz-12", num:"Step 12", name:"確認 BI 異常單（簽核）",
+     detail:"至 CPIS 第 2 顆球 BI AREA → BI 異常紀錄表。\n確認異常單批號與異常板號。\n確認各板處置與產品處置。\n\n簽核流程：\n Running EQ（設備執行中簽核）\n→ Running PL（領班執行中簽核）\n→ 設備（出爐後設備簽核）\n→ 領班（出爐後領班簽核）\n\n可 Print 紙本出交接。",
+     risk:"異常未走完簽核流程，異常品流入下站",
+     control:"出爐後確認 CPIS 是否有異常單，依流程完成簽核", highRisk:true},
+    {id:"fz-13", num:"Step 13", name:"CIMES Move Out",
+     detail:"1. 選擇 MVIN/MVOU，輸入批號後按確定\n2. 輸入工號、選取批號、選擇有無異常單、選取 Bin 設定\n3. 確認 BIN 數量並輸入 Loss 數量，點選完成\n4. 設定完 Bin Data 後，點選確定完成 Move Out",
+     risk:"BIN 設定錯誤，帳務異常或 Loss 數量不正確",
+     control:"確認各 BIN 數量與 Loss 數量後才完成 Move Out", highRisk:false},
+  ]},
+  {id:"board-unload", fcId:"bu", icon:"📤", name:"卸板作業 Unloading", color:"var(--c-bu)", cls:"mod-bu", steps:[
+    {id:"bu-1", num:"Step 1", name:"CIMES Move In",
+     detail:"1. 選擇 MVIN/MVOU，輸入批號後按確定\n2. 輸入工號與機台編號，點選查詢\n3. 勾選批號後點選完成",
+     risk:"Move in 錯誤批號，帳務異常",
+     control:"確認機台號與批號後才完成 Move in", highRisk:false},
+    {id:"bu-2", num:"Step 2", name:"檢查機台信號燈",
+     detail:"確認機台狀態指示燈為黃燈（閒置）。\n燈號：綠燈=生產、黃燈=閒置、紅燈=中斷\n確認機台 ESD LED 燈正常。",
+     risk:"機台非閒置狀態即開始作業，造成異常",
+     control:"確認黃燈亮起且 ESD LED 正常後才作業", highRisk:false},
+    {id:"bu-3", num:"Step 3", name:"檢查機台治具",
+     detail:"確認機台治具是否與 Run Card 產品相符並清潔治具。",
+     risk:"治具型號不符，IC 卸板錯位",
+     control:"對照 Run Card 確認治具型號並清潔", highRisk:false},
+    {id:"bu-4", num:"Step 4", name:"確認 Tray ID、Date Code 與外觀",
+     detail:"確認 Tray ID，使用整批一致的 Tray 盤。\n確認 Date Code 符合指示。\n確認 Tray 四邊與穴位擋牆無破損狀況。",
+     risk:"Tray ID 錯誤或外觀異常，混批或 IC 損壞",
+     control:"確認 Tray ID 與 Date Code 符合；確認外觀無破損", highRisk:false},
+    {id:"bu-5", num:"Step 5", name:"刷取條碼設定機台程式",
+     detail:"卸板前使用 BARCODE 槍刷 Run Card 第一頁條碼，選取卸板 LUL 程式。\n確認 Tray 正反面無異物沾黏。\n⚠ 未確認空盤可能有殘留 IC 混料風險",
+     risk:"未確認空盤，殘留 IC 造成混料",
+     control:"刷條碼確認程式；確認空盤正反面無異物", highRisk:true},
+    {id:"bu-6", num:"Step 6", name:"確認首板 IC 批號（防混料）",
+     detail:"卸板首板確認 1ea IC 正印是否與實物資料相符。\n1 個工作桌面只能有 1 批 Lot。\n若有異常通知領班處理。\n⚠ 若未確認 IC 批號，可能會有混料風險",
+     risk:"未確認 IC 批號，造成混料",
+     control:"卸板首板確認 1ea IC 正印與 Run Card 相符；1 桌只能 1 批", highRisk:true},
+    {id:"bu-7", num:"Step 7", name:"BGA 首板檢查（先背面後正面）",
+     detail:"BGA 產品專屬步驟：先查背面再查正面，注意有無 IC shift。\n\n步驟：\n1. 蓋上蓋盤\n2. 翻面（查背面）\n3. 確認背面無異常\n4. 蓋上蓋盤，翻回正面\n5. 確認正面及 IC shift\n6. 綁帶",
+     risk:"BGA IC shift 未發現，外觀不良品流出",
+     control:"BGA 卸板首板：先查背面再查正面，注意 IC shift", highRisk:false},
+    {id:"bu-8", num:"Step 8", name:"檢查首板 IC 外觀",
+     detail:"檢查 1 首板 IC 外觀，記錄於 Run Card LDChkA 欄位。\n雙手持 Tray 調整角度，由上而下、由左至右確認外觀。\n異常數/一盤 IC 數 填入紀錄。",
+     risk:"外觀異常 IC 未發現，不良品流出",
+     control:"確認外觀並記錄異常數於 Run Card LDChkA", highRisk:false},
+    {id:"bu-9", num:"Step 9", name:"目檢 IC 調整角度",
+     detail:"目檢時需調整角度，由上而下，再由左至右，避免影響光線。\n\nTOP → Bottom → Left → Right 依序確認。",
+     risk:"角度不當導致外觀異常未被檢出",
+     control:"由上而下再由左至右，確保光線角度正確", highRisk:false},
+    {id:"bu-10", num:"Step 10", name:"取出卸板 IC",
+     detail:"從 LUL 機台分 Bin 機構取 IC 時，使用 Bin 上蓋拿取。\n良品與不良品需明確標示區分。\n1 次只取 1 個 BIN。",
+     risk:"良品與不良品混放，混批",
+     control:"使用 Bin 上蓋拿取；1 次 1 BIN；明確標示 Pass/Fail", highRisk:false},
+    {id:"bu-11", num:"Step 11", name:"標示 BIN 別",
+     detail:"· Pass 尾落：白色 Bin Card + 魔術帶\n· Pass 滿落：BIN1 Bin Card\n· Fail：粉紅色 Bin Card + 橡皮筋",
+     risk:"標示錯誤，良品與不良品混淆",
+     control:"依規定顏色 Bin Card 標示各 BIN 別", highRisk:false},
+    {id:"bu-12", num:"Step 12", name:"併盤作業",
+     detail:"一次只能針對同一個 BIN 做尾盤合併。\nTray 缺口朝左下。\n取數量少的未滿盤併到數量多的未滿盤內。\n依 E-Run Card 指示方向放置 IC。\n合併後確認 IC 外觀和極性。",
+     risk:"併盤方向錯誤或不同 BIN 混併，造成混批",
+     control:"一次一 BIN；確認 IC 方向；合併後確認外觀", highRisk:false},
+    {id:"bu-13", num:"Step 13", name:"綁帶作業",
+     detail:"步驟 1：\n綁帶前先確認三邊（a/b/c）Tray 間隙。\n不拿起 Tray 水平轉 90 度確認第四邊（d）間隙。\n\n步驟 2：\n一手按住 Tray 中央，一手綁緊魔術帶於凹槽內側。\n鐵環需落於 Tray 正面中間。\n綁完後依順時鐘方向傾斜確認四面無間隙（需超過 5 秒）。",
+     risk:"IC 跳動或夾盤，導致外觀異常",
+     control:"確認無間隙後才綁帶；綁完後傾斜確認四面（>5秒）", highRisk:false},
+    {id:"bu-14", num:"Step 14", name:"黑箱擺放方式",
+     detail:"由黑箱兩邊先放再放中間，避免 IC 碰撞靜電箱造成夾盤。\n1 箱限放 1 筆批號，嚴禁 1 箱放多筆。",
+     risk:"1 箱放多批造成混批；碰撞靜電箱造成夾盤",
+     control:"由兩邊先放再放中間；嚴格執行 1 箱 1 批", highRisk:true},
+    {id:"bu-15", num:"Step 15", name:"RE-BI 重工（如需要）",
+     detail:"若有異常 IC 需 RE-BI，依 Run Card 指示歸 RE-BI BIN 進行重工。",
+     risk:"RE-BI BIN 歸類錯誤",
+     control:"依 Run Card 指示歸 RE-BI BIN", highRisk:false},
+    {id:"bu-16", num:"Step 16", name:"CIMES 結料作業",
+     detail:"卸板完後使用 CIMES 將各批 BIN 資料 key in 後按 SFK7。\n確認各 BIN 良率。\n若達扣留標準需通知領班將此批扣留給 PE 工程師。\n若需 RE-BI，依 Run Card 指示歸 RE-BI BIN。",
+     risk:"BIN 資料錯誤或未達扣留標準，不良品流出",
+     control:"確認各 BIN 數量並計算良率；達扣留標準通知領班", highRisk:true},
+  ]},
+  {id:"transfer", fcId:"tr", icon:"🚚", name:"轉出作業 Transfer", color:"var(--c-tr)", cls:"mod-tr", steps:[
+    {id:"tr-1", num:"Step 1", name:"確認子母批狀態（X70 到齊）",
+     detail:"方法一（X70）：\nCPIS 查詢 X70，Fab=F1、Hold=*或N、Step=X70\n可查看所有可轉出 CLOT（子母批到齊）。\n\n方法二（BKTOP）：\nCPIS 查詢 BKTOP，輸入廠批點選 Query。\n複製 Customer Lot 後 Query，查看各子母批目前狀況。",
+     risk:"子批未到齊即轉出，造成數量短少",
+     control:"確認 X70 子母批到齊後才執行合批轉出", highRisk:false},
+    {id:"tr-2", num:"Step 2", name:"CIMES 合併帳",
+     detail:"1. 選擇基本指令 → MRLT\n2. 輸入工號、子批與母批，需 1 筆 1 筆合併\n3. 合併完成會顯示訊息\n4. 確認 BKTOP 子母批狀態是否正確",
+     risk:"合併帳務錯誤，帳與實物不符",
+     control:"1 筆 1 筆合併；完成後確認 BKTOP 狀態", highRisk:false},
+    {id:"tr-3", num:"Step 3", name:"合併 IC 作業",
+     detail:"1. 取出所有小 Run Card，子批蓋已完成章\n2. 填寫合併後數量於母批小 Run Card\n3. 將所有流動文件取出存檔\n4. 子批 Run Card 蓋已完成章\n5. Pass 尾落與所有 Fail 放在尾箱\n6. 所有 Pass 滿落放於滿箱，文件放入尾箱\n7. Run Card 插入黑箱外",
+     risk:"文件歸檔錯誤，追溯困難",
+     control:"確認每批文件歸位；子批章蓋確認完成", highRisk:false},
+    {id:"tr-4a", num:"Step 4-A", name:"列印 Run Card（正常品）",
+     detail:"正常品使用黃色 Run Card：\n1. 登入 Notes，點選編輯目前配置\n2. 點選郵件，輸入工號，儲存並關閉\n3. 開啟 Run card 系統，輸入 Notes 密碼\n4. 選擇「正常品發卡」，輸入批號，點選確定\n5. 選取 Route 或 Skip\n6. 點選 Next Step，選取欲列印站點\n7. 設定 By Lot 資訊後列印（黃色紙本）",
+     risk:"Run Card 印錯顏色或站點，流向錯誤",
+     control:"正常品用黃色 Run Card；確認站點後列印", highRisk:false},
+    {id:"tr-4b", num:"Step 4-B", name:"列印 Run Card（工程品 SWR）",
+     detail:"工程品使用紅色 Run Card：\n1. 點選「SWR 發卡」\n2. 點選設定 SWR ID\n3. 確認 Route No，點選設定 Next Step，選擇起始站點\n4. 點選設定 SWR Lot 資訊\n5. 點選列印（紅色紙本）",
+     risk:"工程品用錯顏色或 Route，流向錯誤",
+     control:"SWR 工程品用紅色 Run Card；確認 Route No", highRisk:false},
+    {id:"tr-5", num:"Step 5", name:"CIMES 轉站",
+     detail:"1. 輸入批號\n2. 輸入工號、選擇樓層、選取批號\n3. 完成後顯示訊息\n4. 系統自動產生移轉單，無需列印",
+     risk:"轉站樓層或批號錯誤",
+     control:"確認樓層與批號後轉站；系統自動產生移轉單", highRisk:false},
+    {id:"tr-6", num:"Step 6", name:"實物轉站",
+     detail:"確認 Run Card 下一站的機型，依樓層轉站。",
+     risk:"實物送錯樓層或站點",
+     control:"對照 Run Card 確認下一站機型後移送", highRisk:false},
+    {id:"tr-7", num:"Step 7", name:"先行回貨轉 PK",
+     detail:"1. 確認 Shipping mail、批號、站點、BIN 別與數量\n2. 確認回貨承載方式\n3. 至 Fail Control System 將帳指定站點至 IPK\n4. 實物轉移至 PK 站",
+     risk:"回貨資訊錯誤，出貨品不符",
+     control:"確認 Shipping mail 所有欄位；Fail Control 指定至 IPK", highRisk:false},
+    {id:"tr-8", num:"Step 8", name:"FAIL Control 系統操作",
+     detail:"1. CPIS 第 2 顆球 → Fail Control System\n2. 輸入批號與工號，點選查詢\n3. 勾選欲處理的站點/BIN 別，確認數量與廢料位置\n\n可用功能：\n· 拆批：將 BIN 別數量分拆\n· HOLD：改為扣留當站\n· RTL（隨貨走）：變更跟隨批號\n· 指定站點：移轉到指定站點\n· 出扣留庫房：狀態由扣留改為放行\n· 修改扣留資訊：修改扣留原因描述",
+     risk:"Fail BIN 位置或數量設定錯誤",
+     control:"確認數量與廢料位置正確後操作", highRisk:false},
+  ]},
 ];
 
 const TOTAL = MODULES.reduce((s,m)=>s+m.steps.length,0);
 let checked = JSON.parse(localStorage.getItem('sop_checked')||'{}');
-let expanded = {};
 
-function saveChecked(){ localStorage.setItem('sop_checked', JSON.stringify(checked)); }
+// ── View switch ──────────────────────────────────
+function switchView(v){
+  document.querySelectorAll('.view').forEach(el=>el.classList.remove('active'));
+  document.querySelectorAll('.tab-btn').forEach(el=>el.classList.remove('active'));
+  document.getElementById('view-'+v).classList.add('active');
+  document.getElementById('tab-'+v).classList.add('active');
+  if(v==='flow' && !document.getElementById('fc-wrap').children.length) renderFlowchart();
+}
 
+// ════════════ CHECKLIST ════════════
+function saveChecked(){ localStorage.setItem('sop_checked',JSON.stringify(checked)); }
 function updateProgress(){
-  const done = Object.values(checked).filter(Boolean).length;
-  const pct = Math.round(done/TOTAL*100);
-  document.getElementById('prog-bar').style.width = pct+'%';
-  document.getElementById('prog-text').textContent = `${done} / ${TOTAL} 步驟`;
-
+  const done=Object.values(checked).filter(Boolean).length;
+  document.getElementById('prog-bar').style.width=Math.round(done/TOTAL*100)+'%';
+  document.getElementById('prog-text').textContent=`${done} / ${TOTAL} 步驟`;
   MODULES.forEach(m=>{
-    const allDone = m.steps.every(s=>checked[s.id]);
-    const badge = document.querySelector(`#mod-${m.id} .module-badge`);
-    const mod   = document.getElementById(`mod-${m.id}`);
-    if(badge){ badge.textContent = allDone ? '✓ 完成' : `${m.steps.filter(s=>checked[s.id]).length}/${m.steps.length}`; }
-    if(mod){ allDone ? mod.classList.add('module-done') : mod.classList.remove('module-done'); }
+    const badge=document.querySelector(`#mod-${m.id} .module-badge`);
+    const mod=document.getElementById(`mod-${m.id}`);
+    if(!badge)return;
+    const cnt=m.steps.filter(s=>checked[s.id]).length;
+    const all=cnt===m.steps.length;
+    badge.textContent=all?'✓ 完成':`${cnt}/${m.steps.length}`;
+    all?mod.classList.add('module-done'):mod.classList.remove('module-done');
   });
 }
-
-function toggleModule(id){
-  const el = document.getElementById('mod-'+id);
-  el.classList.toggle('open');
+function toggleModule(id){ document.getElementById('mod-'+id).classList.toggle('open'); }
+function expandAll(){
+  MODULES.forEach(m=>{
+    document.getElementById('mod-'+m.id).classList.add('open');
+    m.steps.forEach(s=>{
+      const el=document.getElementById('step-'+s.id);
+      if(el){ el.classList.add('expanded'); el.querySelector('.expand-btn').textContent='▲ 收起'; }
+    });
+  });
 }
-
+function collapseAll(){
+  MODULES.forEach(m=>{
+    document.getElementById('mod-'+m.id).classList.remove('open');
+    m.steps.forEach(s=>{
+      const el=document.getElementById('step-'+s.id);
+      if(el){ el.classList.remove('expanded'); el.querySelector('.expand-btn').textContent='▼ 展開詳細'; }
+    });
+  });
+}
 function toggleStep(id){
-  const el = document.getElementById('step-'+id);
-  checked[id] = !checked[id];
-  saveChecked();
-  el.classList.toggle('checked', !!checked[id]);
-  el.querySelector('.step-check').textContent = checked[id] ? '✓' : '';
+  const el=document.getElementById('step-'+id);
+  checked[id]=!checked[id]; saveChecked();
+  el.classList.toggle('checked',!!checked[id]);
+  el.querySelector('.step-check').textContent=checked[id]?'✓':'';
   updateProgress();
 }
-
-function toggleExpand(id, e){
+function toggleExpand(id,e){
   e.stopPropagation();
-  const el = document.getElementById('step-'+id);
+  const el=document.getElementById('step-'+id);
   el.classList.toggle('expanded');
-  const btn = el.querySelector('.expand-btn');
-  btn.textContent = el.classList.contains('expanded') ? '▲ 收起' : '▼ 展開詳細';
+  el.querySelector('.expand-btn').textContent=el.classList.contains('expanded')?'▲ 收起':'▼ 展開詳細';
 }
-
 function resetAll(){
-  if(!confirm('確定要重置所有勾選嗎？')) return;
-  checked = {};
-  saveChecked();
-  document.querySelectorAll('.step').forEach(el=>{
-    el.classList.remove('checked');
-    el.querySelector('.step-check').textContent='';
-  });
+  if(!confirm('確定要重置所有勾選嗎？'))return;
+  checked={}; saveChecked();
+  document.querySelectorAll('.step').forEach(el=>{el.classList.remove('checked');el.querySelector('.step-check').textContent='';});
   updateProgress();
 }
-
-function render(){
-  const container = document.getElementById('modules');
-  container.innerHTML = MODULES.map(m=>`
+function renderChecklist(){
+  document.getElementById('modules').innerHTML=MODULES.map(m=>`
     <div class="module" id="mod-${m.id}">
       <div class="module-header" onclick="toggleModule('${m.id}')">
         <span class="module-icon">${m.icon}</span>
-        <div class="module-title">
-          <h2>${m.name}</h2>
-          <span>${m.steps.length} 個步驟</span>
-        </div>
+        <div class="module-title"><h2>${m.name}</h2><span>${m.steps.length} 個步驟</span></div>
         <span class="module-badge">0/${m.steps.length}</span>
         <span class="module-arrow">▼</span>
       </div>
@@ -299,19 +546,117 @@ function render(){
               </div>
               <span class="expand-btn" onclick="toggleExpand('${s.id}',event)">▼ 展開詳細</span>
               <div class="step-detail">
+                ${s.detail?`<div class="detail-row"><span class="detail-lbl" style="color:var(--accent)">📋 步驟：</span></div><div class="detail-steps">${s.detail.replace(/</g,'&lt;').replace(/>/g,'&gt;')}</div>`:''}
                 <div class="detail-row"><span class="detail-lbl lbl-r">⚠ 風險：</span><span>${s.risk}</span></div>
                 <div class="detail-row"><span class="detail-lbl lbl-g">✓ 管控：</span><span>${s.control}</span></div>
-                <div class="kw-row">${s.keywords.map(k=>`<span class="kw">${k}</span>`).join('')}</div>
               </div>
             </div>
           </div>`).join('')}
       </div>
     </div>`).join('');
-
   updateProgress();
 }
 
-render();
+// ════════════ FLOWCHART ════════════
+function openModal(stepId){
+  let step=null, mod=null;
+  MODULES.forEach(m=>{ const s=m.steps.find(s=>s.id===stepId); if(s){step=s;mod=m;} });
+  if(!step)return;
+  document.getElementById('m-name').textContent=step.name;
+  document.getElementById('m-meta').textContent=`${mod.icon} ${mod.name}　${step.num}`;
+  const dw=document.getElementById('m-detail-wrap');
+  if(step.detail){
+    document.getElementById('m-detail').textContent=step.detail;
+    dw.style.display='';
+  } else { dw.style.display='none'; }
+  document.getElementById('m-risk').textContent=step.risk;
+  document.getElementById('m-ctrl').textContent=step.control;
+  document.getElementById('modal').classList.add('open');
+}
+function closeModal(){ document.getElementById('modal').classList.remove('open'); }
+document.getElementById('modal').addEventListener('click',e=>{ if(e.target===document.getElementById('modal'))closeModal(); });
+
+function arrowV(){ return '<div class="fc-arrow-v"></div>'; }
+function innerArrow(){ return '<div class="fc-inner-arrow"></div>'; }
+
+function renderFlowchart(){
+  const wrap=document.getElementById('fc-wrap');
+  let html='';
+
+  // Start
+  html+=`<div class="fc-terminal">開始</div>${arrowV()}`;
+
+  MODULES.forEach((m,mi)=>{
+    html+=`<div class="fc-module-block ${m.cls}" style="width:100%">
+      <div class="fc-module-label">${m.icon} ${m.name}</div>
+      <div class="fc-steps-col">`;
+
+    m.steps.forEach((s,si)=>{
+      const dot=s.highRisk?`<div class="risk-dot" style="background:var(--red)" title="高風險"></div>`:`<div class="risk-dot" style="background:#cbd5e0"></div>`;
+
+      // Special: Pretest decision node
+      if(s.id==='fz-8'){
+        html+=`
+          <div class="fc-step-box" onclick="openModal('${s.id}')">
+            <span class="snum">${s.num}</span>
+            <span class="sname">${s.name}</span>
+            ${dot}
+          </div>
+          ${innerArrow()}
+          <div class="fc-decision-wrap">
+            <div style="font-size:11px;color:var(--sub);margin-bottom:4px;align-self:flex-start;margin-left:8px">判斷</div>
+            <div style="display:flex;align-items:stretch;width:100%;gap:8px">
+              <div style="flex:1;display:flex;flex-direction:column;align-items:center">
+                <div style="font-size:11px;font-weight:700;color:var(--red);margin-bottom:4px">Fail 數量異常？</div>
+                <div style="width:2px;height:16px;background:#742a2a"></div>
+                <div class="fc-branch-box" style="width:100%">⛔ 停爐暫停<br>交換位置重測</div>
+                <div style="width:2px;height:10px;background:#742a2a"></div>
+                <div style="font-size:11px;color:var(--sub)">↓ Fail 歸零後繼續</div>
+              </div>
+              <div style="display:flex;flex-direction:column;align-items:center;justify-content:center;padding:0 4px">
+                <div style="width:48px;height:48px;background:var(--red-bg);border:2px solid var(--red);transform:rotate(45deg);display:flex;align-items:center;justify-content:center">
+                  <span style="transform:rotate(-45deg);font-size:10px;font-weight:700;color:var(--red)">Pass?</span>
+                </div>
+              </div>
+              <div style="flex:1;display:flex;flex-direction:column;align-items:center;justify-content:flex-end">
+                <div style="font-size:11px;font-weight:700;color:var(--green);margin-bottom:4px">正常 Pass</div>
+                <div style="width:2px;height:16px;background:#1a5c30"></div>
+                <div style="background:#0c1f14;border:1.5px solid #1a5c30;border-radius:8px;padding:6px 10px;font-size:12px;font-weight:600;color:var(--green);width:100%;text-align:center">✓ 啟動<br>Burn-In</div>
+              </div>
+            </div>
+          </div>
+          ${si<m.steps.length-1?innerArrow():''}`;
+      } else {
+        html+=`<div class="fc-step-box" onclick="openModal('${s.id}')">
+          <span class="snum">${s.num}</span>
+          <span class="sname">${s.name}</span>
+          ${dot}
+        </div>`;
+        if(si<m.steps.length-1) html+=innerArrow();
+      }
+    });
+
+    html+='</div></div>';
+    if(mi<MODULES.length-1) html+=arrowV();
+  });
+
+  html+=`${arrowV()}<div class="fc-terminal">完成 ✓</div>`;
+
+  // Legend
+  html+=`<div style="margin-top:24px;background:#1a1d2e;border-radius:10px;padding:14px 18px;width:100%;border:1px solid #2d3748;font-size:12px;color:#a0aec0">
+    <div style="font-weight:700;margin-bottom:8px;color:#e2e8f0">圖例</div>
+    <div style="display:flex;gap:16px;flex-wrap:wrap">
+      <span><span style="display:inline-block;width:10px;height:10px;border-radius:99px;background:var(--red);vertical-align:middle;margin-right:4px"></span>高風險步驟</span>
+      <span><span style="display:inline-block;width:10px;height:10px;border-radius:99px;background:#4a5568;vertical-align:middle;margin-right:4px"></span>一般步驟</span>
+      <span>點擊步驟 → 查看風險與管控措施</span>
+    </div>
+  </div>`;
+
+  wrap.innerHTML=html;
+}
+
+// ── Init ─────────────────────────────────────────
+renderChecklist();
 </script>
 </body>
 </html>
